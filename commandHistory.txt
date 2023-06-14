@@ -1,0 +1,9 @@
+//create react app
+npx create-react-app r2t_interface 
+//npm install react-scripts --save
+// install electorn packages
+npm install electron electron-builder wait-on concurrently --dev
+or alternatively: yarn install electron electron-builder wait-on concurrently --dev
+// install other packages
+npm install electron-is-dev
+npm install @electron/remote
