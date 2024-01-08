@@ -24,7 +24,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   waitForElement("closeApp", (element) => {
     element.addEventListener("click", () => {
-      ipcRenderer.invoke("quit-app");
+      ipcRenderer.invoke("hide-app");
     });
   });
   waitForElement("maximizeApp", (element) => {

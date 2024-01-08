@@ -119,22 +119,26 @@ function getChildProcesses(parentPid, callback) {
 
 const runExeFile = () => {
   try {
-    // Adding a process
-    console.log("PATH to exe: ");
-    console.log(pathToExe);
-    const child = spawn(pathToExe, [], { stdio: ["ignore", "pipe", "ignore"] });
+    if (fs.existsSync(pathToExe)) {
+      // Adding a process
+      console.log("PATH to exe: ");
+      console.log(pathToExe);
+      const child = spawn(pathToExe, [], {
+        stdio: ["ignore", "pipe", "ignore"],
+      });
 
-    child.stdout.on("data", (data) => {
-      outputData += data.toString();
-      console.log("output data: ");
-      console.log(outputData);
-    });
+      child.stdout.on("data", (data) => {
+        outputData += data.toString();
+        console.log("output data: ");
+        console.log(outputData);
+      });
 
-    processes.push(child);
+      processes.push(child);
 
-    child.on("exit", function () {
-      processes.splice(processes.indexOf(child), 1);
-    });
+      child.on("exit", function () {
+        processes.splice(processes.indexOf(child), 1);
+      });
+    }
   } catch (error) {
     // Handle the error by showing a dialog
     console.log("Error", `An error occurred: ${error.message}`);
@@ -144,7 +148,8 @@ const runExeFile = () => {
 // ipcMain.handle("get-output", async () => {
 // 	return outputData;
 // });
-ipcMain.handle("quit-app", async (event) => {
+
+ipcMain.handle("hide-app", async (event) => {
   event.preventDefault();
   const mainWindow = BrowserWindow.getFocusedWindow();
   if (mainWindow && !mainWindow.isMinimized() && mainWindow.isVisible()) {
@@ -156,7 +161,6 @@ const handleQuitApp = async () => {
   const choice = 0; // Just an example, you might want this to be an argument.
 
   console.log("Handling 'quit-app'");
-
   console.log("start closing all subprocess...");
 
   try {
@@ -223,9 +227,6 @@ const handleQuitApp = async () => {
   }
 };
 
-// Usage:
-// handleQuitApp(processesArray);
-
 ipcMain.handle("minimize-app", () => {
   const mainWindow = BrowserWindow.getFocusedWindow();
   if (mainWindow) {
@@ -267,7 +268,6 @@ function createWindow() {
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
   // win.loadURL(`file://${path.join(__dirname, "../build/index.html")}`)
-  console.log("START UPDATE FETCH");
   // Controlla gli aggiornamenti
 }
 
@@ -282,7 +282,10 @@ app
   .whenReady()
   .then(() => {
     runExeFile();
+
+    console.log("START UPDATE FETCH");
     autoUpdater.checkForUpdatesAndNotify();
+
     tray = new Tray(`${__dirname}\\tray.png`);
     const mainWindow = BrowserWindow.getFocusedWindow();
     const contextMenu = Menu.buildFromTemplate([
@@ -303,8 +306,6 @@ app
     tray.setContextMenu(contextMenu);
   })
   .catch(console.log);
-
-app.on("before-quit", handleQuitApp);
 
 ipcMain.on("say-hello", (event, data) => {
   console.log("ipcMain received:", data);

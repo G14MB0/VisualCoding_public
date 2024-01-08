@@ -20,7 +20,8 @@
     "electron-updater": "^6.1.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "tree-kill": "^1.2.2"
   },
   "scripts": {
     "start": "set PORT=12346 && react-scripts start",
