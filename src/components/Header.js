@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../provider/appProvider";
 import CloseIcon from "@mui/icons-material/Close";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog } from "@headlessui/react";
 
 const navigation_array = [
   { name: "Home", href: "#" },
