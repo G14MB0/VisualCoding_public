@@ -1,23 +1,22 @@
 import { useContext, useEffect, useState } from "react";
-import LogIn from "../utils/request/auth/LogIn";
+import fetchApi from "../utils/request/requests.js";
 import { AppContext } from "../provider/appProvider";
 
 export default function SignInForm({ setOpenLogin }) {
-  const { serverUrl, setIsLogged, setToken } = useContext(AppContext);
+  const { localServerUrl, localServerPort, setIsLogged, setToken } =
+    useContext(AppContext);
   //error message
-  const [message, setMessage] = useState("")
-
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setMessage('');
+      setMessage("");
     }, 3000); // set a 5-second delay before calling setMessage('')
 
     return () => {
       clearTimeout(timeoutId); // clear the timeout on cleanup
     };
   }, [message]);
-
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -29,34 +28,41 @@ export default function SignInForm({ setOpenLogin }) {
       password: password,
     };
 
-    LogIn(serverUrl, data)
-      .then(async (result) => {
-        if (result.status !== 200) {
-          try {
-            setIsLogged(false);
-            const jsonResult = await result.json();
-            setMessage(jsonResult.detail)
-          } catch (error) {
-            setIsLogged(false);
-            console.error("Error parsing JSON:", error);
-            alert("error");
-          }
-        } else {
+    fetchApi(
+      "POST",
+      localServerUrl,
+      localServerPort,
+      "/login/signin",
+      data
+    ).then(async (result) => {
+      if (result.status !== 200) {
+        try {
+          setIsLogged(false);
           const jsonResult = await result.json();
-          localStorage.setItem("myToken", JSON.stringify(jsonResult.access_token));
-          setToken(jsonResult.access_token)
-          setTimeout(() => {
-            setIsLogged(true);
-          }, 200);
-          setOpenLogin(false)
-          setMessage('')
+          setMessage(jsonResult.detail);
+        } catch (error) {
+          setIsLogged(false);
+          console.error("Error parsing JSON:", error);
+          alert("error");
         }
-      })
+      } else {
+        const jsonResult = await result.json();
+        localStorage.setItem(
+          "myToken",
+          JSON.stringify(jsonResult.access_token)
+        );
+        setToken(jsonResult.access_token);
+        setTimeout(() => {
+          setIsLogged(true);
+        }, 200);
+        setOpenLogin(false);
+        setMessage("");
+      }
+    });
   }
 
   return (
     <>
-
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img

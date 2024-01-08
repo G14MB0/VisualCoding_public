@@ -1,8 +1,7 @@
 import { useContext, useEffect, useState } from "react";
-import { Dialog } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { AppContext } from "../provider/appProvider";
-
+import CloseIcon from "@mui/icons-material/Close";
+import { Dialog, Transition } from "@headlessui/react";
 
 const navigation_array = [
   { name: "Home", href: "#" },
@@ -11,30 +10,22 @@ const navigation_array = [
 ];
 
 export default function Header() {
-  const {  setOpenLogin, setOpenSignUp, setAppState,  isLogged, setIsLogged } = useContext(AppContext)
+  const { setOpenLogin, setOpenSignUp, setAppState, isLogged, setIsLogged } =
+    useContext(AppContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [navigation, setNavigation] = useState([]);
 
   useEffect(() => {
-    isLogged ?
-      setNavigation(navigation_array) :
-      setNavigation([])
+    isLogged ? setNavigation(navigation_array) : setNavigation([]);
   }, [isLogged]);
 
-
-
-
   return (
-
-
     <header className="bg-background-light-alt dark:bg-gray-900 relative w-[100%] h-13 z-10">
       <nav
         className="mx-auto flex max-w-9xl items-center justify-between gap-x-4 p-2 px-4 sm:px-2 lg:px-3"
         aria-label="Global"
       >
-        <div className="flex lg:flex">
-          
-        </div>
+        <div className="flex lg:flex"></div>
         {/* <div className="flex-1 lg:flex-1 h-8 w-auto drag" /> */}
         <div className="hidden lg:flex lg:gap-x-6">
           {navigation.map((item) => (
@@ -42,7 +33,7 @@ export default function Header() {
               key={item.name}
               name={item.name}
               onClick={(e) => {
-                setAppState(e.target.name)
+                setAppState(e.target.name);
               }}
               href={item.href}
               className="text-sm font-semibold leading-6 text-gray-900 dark:text-white"
@@ -57,9 +48,9 @@ export default function Header() {
             <button
               onClick={() => {
                 // Handle log out logic
-                localStorage.clear()
+                localStorage.clear();
                 setIsLogged(false);
-                setAppState('Home')
+                setAppState("Home");
               }}
               className="hidden lg:block lg:text-sm lg:leading-6 lg:text-white-500 dark:text-white px-1"
             >
@@ -95,7 +86,7 @@ export default function Header() {
             onClick={() => setMobileMenuOpen(true)}
           >
             <span className="sr-only">Open main menu</span>
-            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            {/* <Bars3Icon className="h-6 w-6" aria-hidden="true" /> */}
           </button>
         </div>
         <div className="flex ">
@@ -131,7 +122,6 @@ export default function Header() {
         <div className="fixed inset-0 z-10" />
         <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-[white] dark:bg-[#202020] px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center gap-x-6">
-            
             {!isLogged ? (
               <p
                 onClick={() => {
@@ -141,14 +131,17 @@ export default function Header() {
                 className="ml-auto rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Sign up
-              </p>) : (<div />)}
+              </p>
+            ) : (
+              <div />
+            )}
             <button
               type="button"
               className="-m-2.5 rounded-md p-2.5 text-gray-700"
               onClick={() => setMobileMenuOpen(false)}
             >
               <span className="sr-only">Close menu</span>
-              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+              <CloseIcon className="h-6 w-6" aria-hidden="true"></CloseIcon>
             </button>
           </div>
           <div className="mt-6 flow-root">
@@ -157,7 +150,7 @@ export default function Header() {
                 {navigation.map((item) => (
                   <a
                     onClick={(e) => {
-                      setAppState(e.target.name)
+                      setAppState(e.target.name);
                     }}
                     key={item.name}
                     href={item.href}
@@ -170,7 +163,6 @@ export default function Header() {
               {!isLogged ? (
                 <div className="py-6">
                   <p
-                    
                     onClick={() => {
                       setOpenLogin(true);
                     }}
@@ -183,9 +175,9 @@ export default function Header() {
                 <button
                   onClick={() => {
                     // Handle log out logic
-                    localStorage.clear()
+                    localStorage.clear();
                     setIsLogged(false);
-                    setAppState('Home')
+                    setAppState("Home");
                   }}
                   className="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-7 text-gray-200 hover:bg-gray-800"
                 >
@@ -196,9 +188,6 @@ export default function Header() {
           </div>
         </Dialog.Panel>
       </Dialog>
-
-
-
     </header>
   );
 }

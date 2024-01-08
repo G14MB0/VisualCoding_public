@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
-import SignUp from "../utils/request/auth/SignUp";
+import fetchApi from "../utils/request/requests.js";
 import { AppContext } from "../provider/appProvider";
 
 export default function SignUpForm({ setOpenSignUp }) {
-  const { serverUrl } = useContext(AppContext);
+  const { localServerUrl, localServerPort } = useContext(AppContext);
   //used to print the return error message if not sign up
   const [message, setMessage] = useState("");
 
@@ -16,7 +16,7 @@ export default function SignUpForm({ setOpenSignUp }) {
       email: email,
       password: password,
     };
-    SignUp(serverUrl, data)
+    fetchApi("POST", localServerUrl, localServerPort, "/login/signup", data)
       .then(() => {
         setOpenSignUp(false);
       })
@@ -69,9 +69,7 @@ export default function SignUpForm({ setOpenSignUp }) {
                   Password
                 </label>
                 <div className="text-sm">
-                  <p
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
-                  >
+                  <p className="font-semibold text-indigo-600 hover:text-indigo-500">
                     Forgot password?
                   </p>
                 </div>
