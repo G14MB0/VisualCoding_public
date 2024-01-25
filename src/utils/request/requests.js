@@ -25,7 +25,3 @@ export default async function fetchApi(method, url, port, path, body = null) {
   }
 }
 
-// Example Usage
-fetchApi("GET", "example.com", "/the/path", 3000)
-  .then((data) => console.log(data))
-  .catch((error) => console.error(error));

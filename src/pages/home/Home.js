@@ -22,7 +22,7 @@ export default function Home() {
     <div className={"main"}>
       <LogInOverlay />
       <SignUpOverlay />
-      <div className="w-[100vw] h-[100vh]">
+      <div className="w-full h-[calc(100vh-48px)]">
         <FlowPage />
       </div>
 

@@ -2,6 +2,8 @@ import React, { createContext, useState } from "react";
 import Home from "../pages/home/Home";
 import Header from "../components/Header";
 
+import FullOverlay from "../components/overlay/FullOverlay";
+
 export const AppContext = createContext();
 
 export default function AppProvider() {
@@ -9,7 +11,7 @@ export default function AppProvider() {
   const [appState, setAppState] = useState("Home");
   //A global state to handle the eventual server URL and port
   const [localServerUrl, setLocalServerUrl] = useState("127.0.0.1");
-  const [localServerPort, setLocalServerPort] = useState("8000");
+  const [localServerPort, setLocalServerPort] = useState("12345");
 
   //Login state
   const [isLogged, setIsLogged] = useState(false);
@@ -18,6 +20,18 @@ export default function AppProvider() {
   //used to open the login and signup form
   const [openLogin, setOpenLogin] = useState(false);
   const [OpenSignUp, setOpenSignUp] = useState(false);
+
+  // Open/Close the full overlay
+  const [overlay, setOverlay] = useState(false);
+  // State variable to hold the component to be rendered in FullOverlay
+  const [overlayComponent, setOverlayComponent] = useState({
+    Component: null,
+    props: {}, // Initial props (empty object or some default props)
+  });
+
+  // used as a global state for saving to backend
+  const [save, setSave] = useState(false)
+
 
   //sono tutte le mie 'pagine'
   const cmpByState = {
@@ -42,10 +56,19 @@ export default function AppProvider() {
           setLocalServerUrl,
           localServerPort,
           setLocalServerPort,
+          overlay,
+          setOverlay,
+          overlayComponent,
+          setOverlayComponent,
+          save,
+          setSave
         }}
       >
         <Header />
-
+        <FullOverlay
+          Component={overlayComponent.Component}
+          {...overlayComponent.props}
+        />
         {cmpByState[appState]}
       </AppContext.Provider>
     </div>
