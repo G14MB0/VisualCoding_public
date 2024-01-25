@@ -10,6 +10,8 @@ import SideBar from './SideBar';
 import fetchApi from '../../utils/request/requests';
 import { AppContext } from '../../provider/appProvider';
 import ComparatorNode from './customNodes/ComparatorNode';
+import { PlayArrowRounded, Save, SaveSharp, SavingsRounded, StopRounded, UploadFile } from '@mui/icons-material';
+import { closeWs, openWs } from './utils';
 
 
 
@@ -25,7 +27,7 @@ let id = 0;
 const getId = () => `node_${++id}`;
 
 export default function FlowPage() {
-    const { localServerUrl, localServerPort, save } =
+    const { localServerUrl, localServerPort, save, setSave, fileUsed, setFileUsed, reload, setReload } =
         useContext(AppContext);
 
 
@@ -34,13 +36,15 @@ export default function FlowPage() {
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
+    const [ws, setWs] = useState(null);
+    const [activeNode, setActiveNode] = useState({});
+
     // History state to keep track of past node and edge states
     const [history, setHistory] = useState({ nodes: [], edges: [], currentIndex: -1 });
 
 
     // handle passed to dynamic node that propagate data
     const updateNodeData = (nodeId, newData) => {
-        console.log(nodeId)
         setNodes((nds) => nds.map((node) => (node.id === nodeId ? { ...node, data: newData } : node)));
     };
 
@@ -74,7 +78,8 @@ export default function FlowPage() {
             event.preventDefault();
 
             const type = event.dataTransfer.getData('application/reactflow');
-
+            const dataTemp = event.dataTransfer.getData('application/reactflow/data');
+            const dataParsed = JSON.parse(dataTemp)
             // check if the dropped element is valid
             if (typeof type === 'undefined' || !type) {
                 return;
@@ -92,7 +97,7 @@ export default function FlowPage() {
                 id: localId,
                 type,
                 position,
-                data: { label: `${type} node`, id: localId },
+                data: { ...dataParsed, label: `${type} node`, id: localId },
             };
 
             setNodes((nds) => nds.concat(newNode));
@@ -101,32 +106,26 @@ export default function FlowPage() {
     );
 
 
-
-    useEffect(() => {
-
-        const handleSaveGraph = async () => {
-            const data = {
-                nodes,
-                edges
-            };
-
-            try {
-                const response = await fetchApi("POST",
-                    localServerUrl,
-                    localServerPort,
-                    "nodes/graph",
-                    data)
-
-                // Handle success scenario (e.g., showing a success message)
-            } catch (error) {
-                console.error('Error:', error);
-                // Handle error scenario (e.g., showing an error message)
-            }
+    const handleSaveGraph = async () => {
+        const data = {
+            nodes,
+            edges
         };
-        console.log("Saving to Python")
-        handleSaveGraph();
 
-    }, [nodes.length, edges.length, save])
+        try {
+            const response = await fetchApi("POST",
+                localServerUrl,
+                localServerPort,
+                "nodes/graph",
+                data)
+
+            // Handle success scenario (e.g., showing a success message)
+        } catch (error) {
+            console.error('Error:', error);
+            // Handle error scenario (e.g., showing an error message)
+        }
+    };
+
 
 
     useEffect(() => {
@@ -152,7 +151,7 @@ export default function FlowPage() {
             });
             setEdges(uniqueEdges);
         });
-    }, [])
+    }, [reload])
 
 
     // Use a helper function to compare significant changes in nodes and edges
@@ -179,9 +178,14 @@ export default function FlowPage() {
         const lastNodes = history.nodes[history.currentIndex] || [];
         const lastEdges = history.edges[history.currentIndex] || [];
 
+        if (hasSignificantChange(nodes, edges, lastNodes, lastEdges)) {
+            handleSaveGraph();
+            if (fileUsed != "") fetchApi("POST", localServerUrl, localServerPort, "nodes/save", { filePath: fileUsed })
+        }
+
         // Only update history if there's a significant change
         if (history.currentIndex === -1 || hasSignificantChange(nodes, edges, lastNodes, lastEdges)) {
-            console.log("update history")
+
             newHistory.nodes = [...newHistory.nodes.slice(0, newHistory.currentIndex + 1), nodes];
             newHistory.edges = [...newHistory.edges.slice(0, newHistory.currentIndex + 1), edges];
             newHistory.currentIndex += 1;
@@ -191,10 +195,15 @@ export default function FlowPage() {
         }
     }, [nodes, edges]);
 
+    useEffect(() => {
+        handleSaveGraph();
+        if (fileUsed != "") fetchApi("POST", localServerUrl, localServerPort, "nodes/save", { filePath: fileUsed })
+
+    }, [nodes.length, edges.length, save])
+
+
     // Undo function to revert to the previous state
     const undo = useCallback(() => {
-        console.log(history.currentIndex)
-
         if (history.currentIndex > 0) {
             console.log("Annullando")
 
@@ -222,23 +231,59 @@ export default function FlowPage() {
         };
     }, [undo]);
 
-    useEffect(() => {
-        console.log(nodes);
-        console.log(edges)
 
-    }, [nodes.length, edges.length])
+    useEffect(() => {
+        setNodes((nds) =>
+            nds.map((node) => {
+                // Check the state of the node in activeNode
+                if (ws === null) {
+                    node.style = { ...node.style, backgroundColor: "white", borderRadius: "10px", transition: "background-color 0.3s" };
+                } else
+                    if (activeNode[node.id] === 'running') {
+                        // If the node is running, set the background color to azure
+                        node.style = { ...node.style, backgroundColor: "#D2E8FF", borderRadius: "10px", transition: "background-color 0.3s" };
+                    } else {
+                        // If the node is not running, set the background color to white
+                        node.style = { ...node.style, backgroundColor: "white", borderRadius: "10px", transition: "background-color 0.3s" };
+                    }
+                return node;
+            })
+        );
+
+
+    }, [activeNode, ws])
+
+
+    // useEffect(() => {
+    //     console.log(nodes);
+    //     console.log(edges)
+
+    // }, [nodes.length, edges.length])
+
 
 
     return (
         <div className="dndflow">
-            <button
-                onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/plot") }}>Plot</button>
-            <button className='ml-2'
-                onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/run") }}>Play</button>
-            <button className='ml-2'
-                onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop") }}>Stop</button>
+            <div className='absolute top-13 right-0 z-10 px-2 flex justify-between items-center w-[calc(100%-250px)]'>
+                <div>
+                    <button className=''
+                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/run"); openWs(localServerUrl, localServerPort, setWs, setActiveNode) }}><PlayArrowRounded className='text-gray-700' /></button>
+                    <button className=''
+                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); closeWs(ws, setWs) }}><StopRounded className='text-gray-700' /></button>
+                </div>
+                <div className='w-12'>{ }</div>
+
+                <div>
+                    <button className='ml-1'
+                        onClick={() => { fetchApi("POST", localServerUrl, localServerPort, "nodes/save", { filePath: fileUsed }).then((response) => { setSave(!save); setFileUsed(response.filePath); setReload(!reload) }) }}><SaveSharp className='text-gray-700' fontSize='small' /></button>
+                    <button className='ml-1'
+                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/load").then((response) => { setFileUsed(response.filePath); setNodes([]); setEdges([]); setReload(!reload) }) }}><UploadFile className='text-gray-700' fontSize='small' /></button>
+
+                </div>
+            </div>
             <ReactFlowProvider>
                 <div className="reactflow-wrapper" ref={reactFlowWrapper}></div>
+                <SideBar />
                 <ReactFlow
                     defaultEdgeOptions={{ type: 'smoothstep' }}
                     nodes={nodes}
@@ -269,7 +314,7 @@ export default function FlowPage() {
                     />
                     <Controls />
                 </ReactFlow>
-                <SideBar />
+
             </ReactFlowProvider >
         </div>
     );

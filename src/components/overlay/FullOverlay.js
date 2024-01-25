@@ -6,6 +6,8 @@ import { Close } from "@mui/icons-material";
 export default function FullOverlay({ Component, ...props }) {
   const { overlay, setOverlay } = useContext(AppContext);
 
+
+
   return (
     <>
       <div

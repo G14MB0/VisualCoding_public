@@ -22,7 +22,6 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
     // Call updateNodeData whenever selected changes
     useEffect(() => {
         if (updateNodeData) {
-            console.log(data)
             updateNodeData(data.id, { ...data, selected, loop, timerInterval });
         }
     }, [selected, updateNodeData, data.id, timerInterval, loop]);

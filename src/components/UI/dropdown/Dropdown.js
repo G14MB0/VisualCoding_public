@@ -23,7 +23,6 @@ export default function Dropdown({
 	const [flag, setFlag] = useState(0);
 
 	useEffect(() => {
-		console.log("element: ", elements)
 		if (elements && elements.length > 0 && flag === 0) {
 			setSelected(elements[0]);
 			setFlag(1);

@@ -10,7 +10,7 @@ const navigation_array = [
 ];
 
 export default function Header() {
-  const { setOpenLogin, setOpenSignUp, setAppState, isLogged, setIsLogged } =
+  const { setOpenLogin, setOpenSignUp, setAppState, isLogged, setIsLogged, fileUsed } =
     useContext(AppContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [navigation, setNavigation] = useState([]);
@@ -42,41 +42,13 @@ export default function Header() {
             </a>
           ))}
         </div>
+
         <div className="flex-1 lg:flex-1 h-8 w-auto drag" />
+        <div className="font-mono">{fileUsed?.split(/[/\\]/).pop()}</div>
+        <div className="flex-1 lg:flex-1 h-8 w-auto drag" />
+
         <div className="flex flex items-center justify-end gap-x-6">
-          {isLogged ? (
-            <button
-              onClick={() => {
-                // Handle log out logic
-                localStorage.clear();
-                setIsLogged(false);
-                setAppState("Home");
-              }}
-              className="hidden lg:block lg:text-sm lg:leading-6 lg:text-white-500 dark:text-white px-1"
-            >
-              Log out
-            </button>
-          ) : (
-            <>
-              <button
-                className="hidden lg:block lg:text-sm lg:font-semibold lg:leading-6 lg:text-white-900 dark:text-white"
-                onClick={() => {
-                  setOpenLogin(true);
-                }}
-              >
-                Log in
-              </button>
-              <button
-                href="#"
-                onClick={() => {
-                  setOpenSignUp(true);
-                }}
-                className="rounded-md bg-[#4975BD] py-1 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              >
-                Sign up
-              </button>
-            </>
-          )}
+
         </div>
 
         <div className="flex lg:hidden">

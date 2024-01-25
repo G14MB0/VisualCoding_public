@@ -31,6 +31,7 @@ export default function AppProvider() {
 
   // used as a global state for saving to backend
   const [save, setSave] = useState(false)
+  const [fileUsed, setFileUsed] = useState("")
 
 
   //sono tutte le mie 'pagine'
@@ -61,7 +62,8 @@ export default function AppProvider() {
           overlayComponent,
           setOverlayComponent,
           save,
-          setSave
+          setSave,
+          fileUsed, setFileUsed
         }}
       >
         <Header />
