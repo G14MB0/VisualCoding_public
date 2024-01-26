@@ -20,9 +20,9 @@ export default function Header() {
   }, [isLogged]);
 
   return (
-    <header className="bg-background-light-alt dark:bg-gray-900 relative w-[100%] h-13 z-10">
+    <header className="bg-background-light-alt relative w-[100%] h-10 z-10">
       <nav
-        className="mx-auto flex max-w-9xl items-center justify-between gap-x-4 p-2 px-4 sm:px-2 lg:px-3"
+        className="mx-auto flex max-w-9xl items-center justify-between gap-x-4 p-1 px-3"
         aria-label="Global"
       >
         <div className="flex lg:flex"></div>

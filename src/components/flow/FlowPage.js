@@ -3,7 +3,6 @@ import ReactFlow, { useNodesState, useEdgesState, addEdge, MiniMap, Controls, Re
 
 
 import 'reactflow/dist/style.css';
-import ColorSelectorNode from './customNodes/ColorSelectorNode';
 import TimerNode from './customNodes/TimerNode';
 import FunctionNode from './customNodes/FunctionNode';
 import SideBar from './SideBar';
@@ -13,12 +12,12 @@ import ComparatorNode from './customNodes/ComparatorNode';
 import { PlayArrowRounded, Save, SaveSharp, SavingsRounded, StopRounded, UploadFile } from '@mui/icons-material';
 import { closeWs, openWs } from './utils';
 import DebugNode from './customNodes/DebugNode';
+import SumNode from './customNodes/operations/SumNode';
 
 
 
 const connectionLineStyle = { stroke: '#333333', type: "smootstep" };
 const snapGrid = [20, 20];
-
 
 
 const initialNodes = [];
@@ -54,6 +53,7 @@ export default function FlowPage() {
         TimerNode: (nodeProps) => <TimerNode updateNodeData={updateNodeData} {...nodeProps} />,
         FunctionNode: (nodeProps) => <FunctionNode updateNodeData={updateNodeData} {...nodeProps} />,
         DebugNode: (nodeProps) => <DebugNode updateNodeData={updateNodeData} {...nodeProps} />,
+        SumNode: (nodeProps) => <SumNode updateNodeData={updateNodeData} {...nodeProps} />,
     }), []);
 
 
@@ -72,8 +72,6 @@ export default function FlowPage() {
 
 
 
-
-
     // handle for end of drag event
     const onDrop = useCallback(
         (event) => {
@@ -81,7 +79,9 @@ export default function FlowPage() {
 
             const type = event.dataTransfer.getData('application/reactflow');
             const dataTemp = event.dataTransfer.getData('application/reactflow/data');
+            const styleTemp = event.dataTransfer.getData('application/reactflow/style');
             const dataParsed = JSON.parse(dataTemp)
+            const styleParsed = JSON.parse(styleTemp)
             // check if the dropped element is valid
             if (typeof type === 'undefined' || !type) {
                 return;
@@ -95,12 +95,12 @@ export default function FlowPage() {
                 y: event.clientY,
             });
             const localId = getId();
-            const style = { backgroundColor: "white", borderRadius: "10px" }
+            const style = styleParsed
             const newNode = {
                 id: localId,
                 type,
                 position,
-                style: style,
+                style: styleParsed,
                 data: { ...dataParsed, label: `${type} node`, id: localId, style: style },
             };
 
@@ -115,6 +115,7 @@ export default function FlowPage() {
             nodes,
             edges
         };
+        console.log(data)
         try {
             const response = await fetchApi("POST",
                 localServerUrl,
@@ -240,7 +241,7 @@ export default function FlowPage() {
             nds.map((node) => {
                 // Check if ws is null and set node style to default
                 if (ws === null) {
-                    node.style = { ...node.style, backgroundColor: "transparent", borderRadius: "10px", transition: "background-color 0.3s" };
+                    node.style = { ...node.style, boxShadow: "0px 0px" };
                 } else {
                     if (activeNode[node.id] && activeNode[node.id].hasOwnProperty('value')) {
                         node.data = { ...node.data, value: activeNode[node.id]["value"] }
@@ -249,14 +250,14 @@ export default function FlowPage() {
                     if (activeNode[node.id] && activeNode[node.id].hasOwnProperty('isRunning')) {
                         // If the node is running, set the background color to azure
                         if (activeNode[node.id]["isRunning"] === 'running') {
-                            node.style = { ...node.style, backgroundColor: "#D2E8FF", borderRadius: "10px", transition: "background-color 0.3s" };
+                            node.style = { ...node.style, boxShadow: "0px 0px 6px 2px rgba(0, 130, 255, 0.8)", transition: "all 0.3s" };
                         } else {
                             // If the node is not running, set the background color to white
-                            node.style = { ...node.style, backgroundColor: "white", borderRadius: "10px", transition: "background-color 0.3s" };
+                            node.style = { ...node.style, boxShadow: "0px 0px", transition: "all 0.3s" };
                         }
                     } else {
                         // If the activeNode does not exist or does not have isRunning, set the background color to white
-                        node.style = { ...node.style, backgroundColor: "white", borderRadius: "10px", transition: "background-color 0.3s" };
+                        node.style = { ...node.style, boxShadow: "0px 0px", transition: "all 0.3s" };
                     }
                 }
                 return node;
@@ -277,7 +278,7 @@ export default function FlowPage() {
 
     return (
         <div className="dndflow">
-            <div className='absolute top-13 right-0 z-10 px-2 flex justify-between items-center w-[calc(100%-250px)]'>
+            <div className='absolute top-13 right-0 z-10 px-2 flex justify-between items-center lg:w-[calc(100%-250px)] w-[calc(100%-150px)] bg-neutral-200 shadow-inner'>
                 <div>
                     <button className=''
                         onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/run"); openWs(localServerUrl, localServerPort, setWs, setActiveNode) }}><PlayArrowRounded className='text-gray-700' /></button>

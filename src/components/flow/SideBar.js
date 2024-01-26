@@ -17,15 +17,25 @@ const availableNode = {
     FunctionNode: "Funciton",
     ComparatorNode: "Comparator",
     DebugNode: "Debugger",
+    SumNode: "Sum",
+}
+
+const nodeStyles = {
+    TimerNode: { backgroundColor: '#b5e2fa', borderRadius: "10px", transition: "background-color 0.3s" },
+    FunctionNode: { backgroundColor: '#eddea4', borderRadius: "10px", transition: "background-color 0.3s" },
+    ComparatorNode: { backgroundColor: '#f7a072', borderRadius: "10px", transition: "background-color 0.3s" },
+    DebugNode: { backgroundColor: '#e9ff70', borderRadius: "10px", transition: "background-color 0.3s", },
+    SumNode: { backgroundColor: '#f5f5f5', borderRadius: "10px", transition: "background-color 0.3s", }
 }
 
 
 export default () => {
     const [customNodes, setCustomNodes] = useState([])
     const { localServerUrl, localServerPort, reload, setOverlay, setOverlayComponent, setReload, sideBarReload, setSideBarReload } = useContext(AppContext)
-    const onDragStart = (event, nodeType, data = null) => {
+    const onDragStart = (event, nodeType, data = null, style = null) => {
         event.dataTransfer.setData('application/reactflow', nodeType);
         event.dataTransfer.setData('application/reactflow/data', data);
+        event.dataTransfer.setData('application/reactflow/style', style);
         event.dataTransfer.effectAllowed = 'move';
     };
 
@@ -48,8 +58,6 @@ export default () => {
         fetchApi("GET", localServerUrl, localServerPort, "functions/").then((response) => {
             setCustomNodes(response)
         })
-
-
     }, [, sideBarReload])
 
 
@@ -58,7 +66,11 @@ export default () => {
             <div className="w-full px-2 py-1 font-semibold ">Default Nodes</div>
             <div className='flex flex-wrap'>
                 {Object.entries(availableNode).map(([element, value], key) => (
-                    <div key={key} className="flex items-center justify-center w-24 text-align-center h-12 shadow-sm bg-indigo-100 hover:bg-indigo-50 cursor-grab rounded m-2" onDragStart={(event) => onDragStart(event, element)} draggable>
+                    <div key={key}
+                        className={`flex items-center justify-center w-24 text-align-center h-12 shadow-sm hover:origin-top-left hover:-rotate-2 transition-all cursor-grab rounded m-2`}
+                        style={{ backgroundColor: nodeStyles[element]['backgroundColor'] }}
+                        onDragStart={(event) => onDragStart(event, element, null, JSON.stringify(nodeStyles[element]))}
+                        draggable>
                         {value}
                     </div>
                 ))}
@@ -66,7 +78,12 @@ export default () => {
             <div className="w-full px-2 py-1 font-semibold  mt-4">Custom Nodes</div>
             <div className='flex flex-wrap'>
                 {customNodes?.map((item, key) => (
-                    <div key={item.name} className="relative flex items-center justify-center w-24 text-align-center h-12 shadow-sm bg-indigo-100 hover:bg-indigo-50 cursor-grab rounded m-2" onDragStart={(event) => onDragStart(event, item.type, item.data)} draggable>
+                    <div
+                        key={item.name}
+                        style={{ backgroundColor: nodeStyles[item.type]['backgroundColor'] }}
+                        className="relative flex items-center justify-center w-24 text-align-center h-12 shadow-sm hover:origin-top-left hover:-rotate-2 transition-all cursor-grab rounded m-2"
+                        onDragStart={(event) => onDragStart(event, item.type, item.data, item.style)}
+                        draggable>
                         <div className="absolute top-[-7px]  right-[-3px]  text-gray-600 hover:text-gray-800 cursor-pointer" onClick={(e) => { handleDeleteNode(e, item.name) }}>
                             &#x2715; {/* This is the Unicode character for a multiplication sign (X) */}
                         </div>
@@ -92,3 +109,4 @@ export default () => {
         </aside>
     );
 };
+

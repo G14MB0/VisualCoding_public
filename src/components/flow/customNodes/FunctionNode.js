@@ -35,6 +35,7 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
 
     const handleSaveAsModel = (e) => {
         e.preventDefault()
+        console.log(data)
         const temp = {
             name: name,
             type: "FunctionNode",

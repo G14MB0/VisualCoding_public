@@ -8,7 +8,9 @@
     @apply border border-[#333] p-4 min-h-12 rounded-lg cursor-grab
 }
 
-
+.nodeSquare {
+    @apply border border-[#333] p-4 h-24 w-24 rounded-lg cursor-grab
+}
 
 
 
@@ -78,15 +80,22 @@
         flex-direction: row;
     }
 
-
+    aside {
+        /* width: 20%; */
+        min-width: 250px;
+        max-width: 250px;
+    }
 }
 
-aside {
-    /* width: 20%; */
+@media screen and (max-width: 767px) {
 
-    width: 250px !important;
-    min-width: 250px;
+    aside {
+        /* width: 20%; */
+        min-width: 150px;
+        max-width: 150px;
+    }
 }
+
 
 .buttonMain {
     background: linear-gradient(135deg, rgba(127, 150, 226, 0.692) 0%, rgba(99, 101, 241, 0.795) 100%);
