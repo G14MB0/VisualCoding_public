@@ -12,6 +12,7 @@ import { AppContext } from '../../provider/appProvider';
 import ComparatorNode from './customNodes/ComparatorNode';
 import { PlayArrowRounded, Save, SaveSharp, SavingsRounded, StopRounded, UploadFile } from '@mui/icons-material';
 import { closeWs, openWs } from './utils';
+import DebugNode from './customNodes/DebugNode';
 
 
 
@@ -52,6 +53,7 @@ export default function FlowPage() {
         ComparatorNode: (nodeProps) => <ComparatorNode updateNodeData={updateNodeData} conn {...nodeProps} />,
         TimerNode: (nodeProps) => <TimerNode updateNodeData={updateNodeData} {...nodeProps} />,
         FunctionNode: (nodeProps) => <FunctionNode updateNodeData={updateNodeData} {...nodeProps} />,
+        DebugNode: (nodeProps) => <DebugNode updateNodeData={updateNodeData} {...nodeProps} />,
     }), []);
 
 
@@ -93,11 +95,13 @@ export default function FlowPage() {
                 y: event.clientY,
             });
             const localId = getId();
+            const style = { backgroundColor: "white", borderRadius: "10px" }
             const newNode = {
                 id: localId,
                 type,
                 position,
-                data: { ...dataParsed, label: `${type} node`, id: localId },
+                style: style,
+                data: { ...dataParsed, label: `${type} node`, id: localId, style: style },
             };
 
             setNodes((nds) => nds.concat(newNode));
@@ -111,7 +115,6 @@ export default function FlowPage() {
             nodes,
             edges
         };
-
         try {
             const response = await fetchApi("POST",
                 localServerUrl,
@@ -235,17 +238,27 @@ export default function FlowPage() {
     useEffect(() => {
         setNodes((nds) =>
             nds.map((node) => {
-                // Check the state of the node in activeNode
+                // Check if ws is null and set node style to default
                 if (ws === null) {
-                    node.style = { ...node.style, backgroundColor: "white", borderRadius: "10px", transition: "background-color 0.3s" };
-                } else
-                    if (activeNode[node.id] === 'running') {
+                    node.style = { ...node.style, backgroundColor: "transparent", borderRadius: "10px", transition: "background-color 0.3s" };
+                } else {
+                    if (activeNode[node.id] && activeNode[node.id].hasOwnProperty('value')) {
+                        node.data = { ...node.data, value: activeNode[node.id]["value"] }
+                    }
+                    // Check if activeNode for the current node exists and has the isRunning property
+                    if (activeNode[node.id] && activeNode[node.id].hasOwnProperty('isRunning')) {
                         // If the node is running, set the background color to azure
-                        node.style = { ...node.style, backgroundColor: "#D2E8FF", borderRadius: "10px", transition: "background-color 0.3s" };
+                        if (activeNode[node.id]["isRunning"] === 'running') {
+                            node.style = { ...node.style, backgroundColor: "#D2E8FF", borderRadius: "10px", transition: "background-color 0.3s" };
+                        } else {
+                            // If the node is not running, set the background color to white
+                            node.style = { ...node.style, backgroundColor: "white", borderRadius: "10px", transition: "background-color 0.3s" };
+                        }
                     } else {
-                        // If the node is not running, set the background color to white
+                        // If the activeNode does not exist or does not have isRunning, set the background color to white
                         node.style = { ...node.style, backgroundColor: "white", borderRadius: "10px", transition: "background-color 0.3s" };
                     }
+                }
                 return node;
             })
         );

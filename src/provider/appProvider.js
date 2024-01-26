@@ -17,6 +17,7 @@ export default function AppProvider() {
   const [isLogged, setIsLogged] = useState(false);
   //used to set the JWT token
   const [reload, setReload] = useState(null);
+  const [sideBarReload, setSideBarReload] = useState(null);
   //used to open the login and signup form
   const [openLogin, setOpenLogin] = useState(false);
   const [OpenSignUp, setOpenSignUp] = useState(false);
@@ -63,7 +64,8 @@ export default function AppProvider() {
           setOverlayComponent,
           save,
           setSave,
-          fileUsed, setFileUsed
+          fileUsed, setFileUsed,
+          sideBarReload, setSideBarReload
         }}
       >
         <Header />

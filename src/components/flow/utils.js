@@ -11,7 +11,6 @@ export function openWs(localServerUrl, localServerPort, setWs, setMessage) {
         // Assuming the message is JSON
         try {
             const newMessage = JSON.parse(event.data);
-            console.log(newMessage)
             setMessage(newMessage)
         } catch (e) {
             console.error("Error parsing message", e);

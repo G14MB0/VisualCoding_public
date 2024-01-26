@@ -10,10 +10,9 @@ import { useEffect } from 'react';
 
 export default memo(({ data, isConnectable, updateNodeData }) => {
 
-    const { setOverlay, setOverlayComponent, setSave, save, localServerUrl, localServerPort, setReload, reload } = useContext(AppContext)
+    const { setOverlay, setOverlayComponent, setSave, save, localServerUrl, localServerPort, sideBarReload, setSideBarReload } = useContext(AppContext)
     const [code, setCode] = useState(data.code);
     const [name, setName] = useState("");
-    const [isSaving, setIsSaving] = useState("");
 
     const handleOpenEditor = (e) => {
         e.preventDefault();
@@ -36,15 +35,14 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
 
     const handleSaveAsModel = (e) => {
         e.preventDefault()
-        console.log(data)
         const temp = {
             name: name,
             type: "FunctionNode",
+            style: data.style,
             data: { code: data.code },
             category: "Custom Function"
         }
-        console.log(temp)
-        fetchApi("POST", localServerUrl, localServerPort, "functions/", temp).then(() => setReload(!reload))
+        fetchApi("POST", localServerUrl, localServerPort, "functions/", temp).then(() => setSideBarReload(!sideBarReload))
     }
     // Call updateNodeData whenever selected changes
     useEffect(() => {
