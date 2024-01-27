@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useContext, useMemo } from 'react';
-import ReactFlow, { useNodesState, useEdgesState, addEdge, MiniMap, Controls, ReactFlowProvider, SmoothStepEdge } from 'reactflow';
+import ReactFlow, { useNodesState, useEdgesState, addEdge, MiniMap, Controls, ReactFlowProvider, SmoothStepEdge, useStoreApi, Background, BackgroundVariant, useOnSelectionChange } from 'reactflow';
 
 
 import 'reactflow/dist/style.css';
@@ -13,12 +13,19 @@ import { PlayArrowRounded, Save, SaveSharp, SavingsRounded, StopRounded, UploadF
 import { closeWs, openWs } from './utils';
 import DebugNode from './customNodes/DebugNode';
 import SumNode from './customNodes/operations/SumNode';
+import { getNodeTypes, getOperation } from './nodeDefinition';
+import SimpleFloatingEdge from './customNodes/SimpleFloatingEdge';
 
 
 
 const connectionLineStyle = { stroke: '#333333', type: "smootstep" };
 const snapGrid = [20, 20];
 
+const MIN_DISTANCE = 850;
+
+const edgeTypes = {
+    floating: SimpleFloatingEdge,
+};
 
 const initialNodes = [];
 const initialEdges = [];
@@ -39,8 +46,18 @@ export default function FlowPage() {
     const [ws, setWs] = useState(null);
     const [activeNode, setActiveNode] = useState({});
 
+    // const [selectedNodes, setSelectedNodes] = useState(new Set());
+    // const [selectedEdges, setSelectedEdges] = useState(new Set());
+
     // History state to keep track of past node and edge states
     const [history, setHistory] = useState({ nodes: [], edges: [], currentIndex: -1 });
+
+
+    /* ************************************************* */
+    /*               NODES BASIC DEFINITION              */
+    /* ************************************************* */
+
+    const store = useStoreApi();
 
 
     // handle passed to dynamic node that propagate data
@@ -48,13 +65,9 @@ export default function FlowPage() {
         setNodes((nds) => nds.map((node) => (node.id === nodeId ? { ...node, data: newData } : node)));
     };
 
-    const nodeTypes = useMemo(() => ({
-        ComparatorNode: (nodeProps) => <ComparatorNode updateNodeData={updateNodeData} conn {...nodeProps} />,
-        TimerNode: (nodeProps) => <TimerNode updateNodeData={updateNodeData} {...nodeProps} />,
-        FunctionNode: (nodeProps) => <FunctionNode updateNodeData={updateNodeData} {...nodeProps} />,
-        DebugNode: (nodeProps) => <DebugNode updateNodeData={updateNodeData} {...nodeProps} />,
-        SumNode: (nodeProps) => <SumNode updateNodeData={updateNodeData} {...nodeProps} />,
-    }), []);
+    // define nodeTypes, relate a type (str) to a react child element
+    const nodeTypes = useMemo(() => getNodeTypes(updateNodeData), []);
+
 
 
     const onConnect = useCallback(
@@ -63,7 +76,16 @@ export default function FlowPage() {
         [setEdges]
     );
 
+    // useOnSelectionChange(({ nodes }) => {
+    //     const selectedNodeIds = new Set(nodes.map(node => node.id));
+    //     const selectedEdgeIds = new Set(edges.map(edge => edge.id));
+    //     setSelectedNodes(selectedNodeIds);
+    //     setSelectedEdges(selectedEdgeIds);
+    // });
 
+    /* ************************************************* */
+    /*             DRAG AND DROP EVENT HANDLER           */
+    /* ************************************************* */
     // handle for during the drag event
     const onDragOver = useCallback((event) => {
         event.preventDefault();
@@ -100,8 +122,9 @@ export default function FlowPage() {
                 id: localId,
                 type,
                 position,
+                dragHandle: ".drag_Handle",
                 style: styleParsed,
-                data: { ...dataParsed, label: `${type} node`, id: localId, style: style },
+                data: { ...dataParsed, label: `${type} node`, id: localId, style: style, operation: getOperation(type) },
             };
 
             setNodes((nds) => nds.concat(newNode));
@@ -110,6 +133,10 @@ export default function FlowPage() {
     );
 
 
+    /* ************************************************* */
+    /*   GENERIC HANDLER FUNCTIONS (with API fetch)      */
+    /* ************************************************* */
+    // Handle for saving graph definition to backend
     const handleSaveGraph = async () => {
         const data = {
             nodes,
@@ -132,6 +159,29 @@ export default function FlowPage() {
 
 
 
+    // Helper function to compare significant changes in nodes and edges
+    const hasSignificantChange = (newNodes, newEdges, lastNodes, lastEdges) => {
+        // Example: Compare based on node data and edge connections, ignoring positions
+        const nodesChanged = newNodes.some((node, index) => {
+            if (lastNodes[index] && (node.data !== lastNodes[index].data)) {
+                return true;
+            }
+            return false;
+        });
+
+        const edgesChanged = newEdges.length !== lastEdges.length || newEdges.some((edge, index) => {
+            const lastEdge = lastEdges[index];
+            return !lastEdge || edge.source !== lastEdge.source || edge.target !== lastEdge.target || edge.data !== lastEdge.data;
+        });
+
+        return nodesChanged || edgesChanged;
+    };
+
+
+    /* ************************************************* */
+    /*    UseEffects TO CALL FUNCTIONS BASED ON EVENT    */
+    /* ************************************************* */
+    // At each reload, get the node definition from backend and create the graph 
     useEffect(() => {
         // Assuming IDs are in the format "node_X" where X is a numeric value
         const getHighestNodeId = (nodes) => {
@@ -158,25 +208,7 @@ export default function FlowPage() {
     }, [reload])
 
 
-    // Use a helper function to compare significant changes in nodes and edges
-    const hasSignificantChange = (newNodes, newEdges, lastNodes, lastEdges) => {
-        // Example: Compare based on node data and edge connections, ignoring positions
-        const nodesChanged = newNodes.some((node, index) => {
-            if (lastNodes[index] && (node.data !== lastNodes[index].data)) {
-                return true;
-            }
-            return false;
-        });
-
-        const edgesChanged = newEdges.length !== lastEdges.length || newEdges.some((edge, index) => {
-            const lastEdge = lastEdges[index];
-            return !lastEdge || edge.source !== lastEdge.source || edge.target !== lastEdge.target || edge.data !== lastEdge.data;
-        });
-
-        return nodesChanged || edgesChanged;
-    };
-
-
+    // At each node change, check if a significant change happen and update the graphHistory. used for ctrl+z
     useEffect(() => {
         const newHistory = { ...history };
         const lastNodes = history.nodes[history.currentIndex] || [];
@@ -199,6 +231,8 @@ export default function FlowPage() {
         }
     }, [nodes, edges]);
 
+
+    // also save the graph if the nodes or edges array changes in length. also save to file
     useEffect(() => {
         handleSaveGraph();
         if (fileUsed != "") fetchApi("POST", localServerUrl, localServerPort, "nodes/save", { filePath: fileUsed })
@@ -236,6 +270,7 @@ export default function FlowPage() {
     }, [undo]);
 
 
+    // change css to active (in execution) nodes
     useEffect(() => {
         setNodes((nds) =>
             nds.map((node) => {
@@ -250,21 +285,19 @@ export default function FlowPage() {
                     if (activeNode[node.id] && activeNode[node.id].hasOwnProperty('isRunning')) {
                         // If the node is running, set the background color to azure
                         if (activeNode[node.id]["isRunning"] === 'running') {
-                            node.style = { ...node.style, boxShadow: "0px 0px 6px 2px rgba(0, 130, 255, 0.8)", transition: "all 0.3s" };
+                            node.style = { ...node.style, boxShadow: "0px 0px 6px 2px rgba(0, 130, 255, 0.8)", transition: "box-shadow 0.3s" };
                         } else {
                             // If the node is not running, set the background color to white
-                            node.style = { ...node.style, boxShadow: "0px 0px", transition: "all 0.3s" };
+                            node.style = { ...node.style, boxShadow: "0px 0px", transition: "box-shadow 0.3s" };
                         }
                     } else {
                         // If the activeNode does not exist or does not have isRunning, set the background color to white
-                        node.style = { ...node.style, boxShadow: "0px 0px", transition: "all 0.3s" };
+                        node.style = { ...node.style, boxShadow: "0px 0px", transition: "box-shadow 0.3s" };
                     }
                 }
                 return node;
             })
         );
-
-
     }, [activeNode, ws])
 
 
@@ -277,6 +310,10 @@ export default function FlowPage() {
 
 
     return (
+        //
+        // Defined over the appProvider, since the storeApi is itself a provider and can't be accessed at higer lever with respect to ReactFlowProvider.
+        // 
+        // <ReactFlowProvider>
         <div className="dndflow">
             <div className='absolute top-13 right-0 z-10 px-2 flex justify-between items-center lg:w-[calc(100%-250px)] w-[calc(100%-150px)] bg-neutral-200 shadow-inner'>
                 <div>
@@ -295,41 +332,43 @@ export default function FlowPage() {
 
                 </div>
             </div>
-            <ReactFlowProvider>
-                <div className="reactflow-wrapper" ref={reactFlowWrapper}></div>
-                <SideBar />
-                <ReactFlow
-                    defaultEdgeOptions={{ type: 'smoothstep' }}
-                    nodes={nodes}
-                    edges={edges}
-                    onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    onConnect={onConnect}
-                    onInit={setReactFlowInstance}
-                    onDrop={onDrop}
-                    onDragOver={onDragOver}
-                    style={{ background: "#fff" }}
-                    nodeTypes={nodeTypes}
-                    connectionLineStyle={connectionLineStyle}
-                    snapToGrid={false}
-                    snapGrid={snapGrid}
-                    fitView
-                    attributionPosition="bottom-left"
-                    deleteKeyCode={"Delete"}
-                >
-                    <MiniMap
-                    // nodeStrokeColor={(n) => {
-                    //     if (n.type === 'input') return '#0041d0';
-                    //     if (n.type === 'output') return '#ff0072';
-                    // }}
-                    // nodeColor={(n) => {
-                    //     return '#fff';
-                    // }}
-                    />
-                    <Controls />
-                </ReactFlow>
 
-            </ReactFlowProvider >
+            <div className="reactflow-wrapper" ref={reactFlowWrapper}></div>
+            <SideBar />
+            <ReactFlow
+                defaultEdgeOptions={{ type: 'smoothstep' }}
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                onInit={setReactFlowInstance}
+                onDrop={onDrop}
+                onDragOver={onDragOver}
+                style={{ background: "#fff" }}
+                nodeTypes={nodeTypes}
+                edgeTypes={edgeTypes}
+                connectionLineStyle={connectionLineStyle}
+                snapToGrid={false}
+                snapGrid={snapGrid}
+                fitView
+                attributionPosition="bottom-left"
+                deleteKeyCode={"Delete"}
+            >
+                <Background variant={BackgroundVariant.Cross} gap={50} />
+                <MiniMap
+                // nodeStrokeColor={(n) => {
+                //     if (n.type === 'input') return '#0041d0';
+                //     if (n.type === 'output') return '#ff0072';
+                // }}
+                // nodeColor={(n) => {
+                //     return '#fff';
+                // }}
+                />
+                <Controls />
+            </ReactFlow>
         </div>
+
+        // </ReactFlowProvider >
     );
 };

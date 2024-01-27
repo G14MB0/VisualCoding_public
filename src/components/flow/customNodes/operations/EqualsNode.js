@@ -3,7 +3,7 @@ import { Handle, Position } from 'reactflow';
 import { useContext } from 'react';
 import { useEffect } from 'react';
 import { AppContext } from '../../../../provider/appProvider';
-import { AddRounded } from '@mui/icons-material';
+import { BalanceRounded, ContentCutRounded } from '@mui/icons-material';
 
 
 
@@ -15,7 +15,7 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
     // Call updateNodeData whenever selected changes
     useEffect(() => {
         if (updateNodeData) {
-            updateNodeData(data.id, { ...data, operation: "sum" });
+            updateNodeData(data.id, { ...data, operation: "equals" });
 
         }
     }, [updateNodeData, data.id, operation]);
@@ -40,13 +40,21 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
                 isConnectable={isConnectable}
             />
             <div className='flex justify-center items-center'>
-                <AddRounded fontSize='large' />
+                <BalanceRounded fontSize='large' />
             </div>
 
             <Handle
                 type="source"
+                style={{ top: 15 }}
                 position={Position.Right}
                 id="a"
+                isConnectable={isConnectable}
+            />
+            <Handle
+                type="source"
+                style={{ bottom: 10, top: 'auto', }}
+                position={Position.Right}
+                id="b"
                 isConnectable={isConnectable}
             />
         </ div>

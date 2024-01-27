@@ -9,10 +9,46 @@
 }
 
 .nodeSquare {
-    @apply border border-[#333] p-4 h-24 w-24 rounded-lg cursor-grab
+    @apply border border-[#333] p-4 h-16 w-16 rounded-lg cursor-grab
+}
+
+.react-flow__node:not(.selected):hover {
+    box-shadow: 0 0 6px 1px rgb(200, 219, 255) !important;
+}
+
+.selected {
+    box-shadow: 0 0 6px 2px rgb(134, 176, 255) !important;
 }
 
 
+.react-flow__handle {
+    background-color: #727272 !important;
+    width: 8px !important;
+    height: 8px !important;
+    transition: 'background-color' 0.2s;
+}
+
+.react-flow__handle:hover {
+    background-color: #2f913c !important;
+    width: 10px !important;
+    height: 10px !important;
+}
+
+.react-flow__handle-top {
+    top: -10px !important;
+}
+
+.react-flow__handle-bottom {
+    bottom: -10px !important;
+}
+
+.react-flow__handle-left {
+    left: -10px !important;
+}
+
+.react-flow__handle-right {
+    right: -10px !important;
+}
 
 .main {
     width: 100%;

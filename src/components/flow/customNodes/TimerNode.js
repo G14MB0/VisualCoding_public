@@ -12,10 +12,10 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
     const [timerInterval, setTimerInterval] = useState(data.timerInterval)
 
     const handleTimerInterval = (e) => {
-        e.preventDefault()
-        const value = e.target.value;
+
+        // const value = e.target.value;
         // Update state with the numeric value if it's a number, or reset to 0 (or keep empty for flexibility)
-        setTimerInterval(+value);
+        setTimerInterval(e);
     }
 
 
@@ -33,12 +33,12 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
                 position={Position.Left}
                 isConnectable={isConnectable}
             /> */}
-            <div className='flex justify-between items-center mb-2'>
-                <div className='font-mono text-xs mb-2'>
+            <div className='flex justify-between items-center mb-2 drag_Handle'>
+                <div className='font-mono text-xs mb-2 drag_Handle'>
                     Timer
 
                 </div>
-                <div className='mb-2 flex flex-col items-center'>
+                <div className='mb-2 flex flex-col items-center drag_Handle'>
                     <div className='font-mono text-xs mb-1 text-center'>
                         loop
                     </div>
@@ -54,15 +54,19 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
                 <div className='w-[50%] mr-1'>
                     <input
                         value={timerInterval}
-                        onChange={(e) => { handleTimerInterval(e) }}
+                        onChange={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleTimerInterval(e.target.value)
+                        }}
                         id="interval"
                         name="interval"
-                        type="text"
+                        type="number"
                         min="1"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
                     />
                 </div>
-                <div className='w-[50%]'>
+                <div className='w-[50%] drag_Handle'>
                     <Dropdown elements={mu} onChange={setSelected} />
                 </div>
             </div>

@@ -3,30 +3,8 @@ import fetchApi from '../../utils/request/requests';
 import { AppContext } from '../../provider/appProvider';
 import { CloseRounded, DeleteRounded } from '@mui/icons-material';
 import Confirm from '../overlay/confirm';
+import { availableNode, nodeStyles } from './nodeDefinition';
 
-
-// const availableNode = {
-//     onMessage: "onMessage",
-//     sendMessage: "sendMessage",
-//     timer: "timer",
-//     comparator: "comparator",
-//     function: "funciton"
-// }
-const availableNode = {
-    TimerNode: "Timer",
-    FunctionNode: "Funciton",
-    ComparatorNode: "Comparator",
-    DebugNode: "Debugger",
-    SumNode: "Sum",
-}
-
-const nodeStyles = {
-    TimerNode: { backgroundColor: '#b5e2fa', borderRadius: "10px", transition: "background-color 0.3s" },
-    FunctionNode: { backgroundColor: '#eddea4', borderRadius: "10px", transition: "background-color 0.3s" },
-    ComparatorNode: { backgroundColor: '#f7a072', borderRadius: "10px", transition: "background-color 0.3s" },
-    DebugNode: { backgroundColor: '#e9ff70', borderRadius: "10px", transition: "background-color 0.3s", },
-    SumNode: { backgroundColor: '#f5f5f5', borderRadius: "10px", transition: "background-color 0.3s", }
-}
 
 
 export default () => {
@@ -65,13 +43,25 @@ export default () => {
         <aside>
             <div className="w-full px-2 py-1 font-semibold ">Default Nodes</div>
             <div className='flex flex-wrap'>
-                {Object.entries(availableNode).map(([element, value], key) => (
+                {Object.entries(availableNode).filter(([, value]) => value.category === "default").map(([element, value], key) => (
                     <div key={key}
                         className={`flex items-center justify-center w-24 text-align-center h-12 shadow-sm hover:origin-top-left hover:-rotate-2 transition-all cursor-grab rounded m-2`}
                         style={{ backgroundColor: nodeStyles[element]['backgroundColor'] }}
                         onDragStart={(event) => onDragStart(event, element, null, JSON.stringify(nodeStyles[element]))}
                         draggable>
-                        {value}
+                        {value.name}
+                    </div>
+                ))}
+            </div>
+            <div className="w-full px-2 py-1 font-semibold  mt-4">Operation</div>
+            <div className='flex flex-wrap'>
+                {Object.entries(availableNode).filter(([, value]) => value.category === "operation").map(([element, value], key) => (
+                    <div key={key}
+                        className={`flex items-center justify-center w-12 text-align-center h-12 shadow-sm hover:origin-top-left hover:-rotate-2 transition-all cursor-grab rounded m-2`}
+                        style={{ backgroundColor: nodeStyles[element]['backgroundColor'] }}
+                        onDragStart={(event) => onDragStart(event, element, null, JSON.stringify(nodeStyles[element]))}
+                        draggable>
+                        {value.icon}
                     </div>
                 ))}
             </div>

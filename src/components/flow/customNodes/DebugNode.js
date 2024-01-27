@@ -17,6 +17,7 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
         <div className='nodeBase min-w-60 shadow' >
             <Handle
                 type="target"
+                id='a'
                 position={Position.Bottom}
                 isConnectable={isConnectable}
             />

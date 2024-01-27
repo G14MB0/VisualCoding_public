@@ -48,6 +48,7 @@ export default memo(({ data, isConnectable, updateNodeData, connectedNodes = {} 
         <div className='nodeBase min-w-60' >
             <Handle
                 type="target"
+                id="a"
                 position={Position.Left}
                 isConnectable={isConnectable}
             />

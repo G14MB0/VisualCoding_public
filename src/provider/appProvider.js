@@ -3,6 +3,7 @@ import Home from "../pages/home/Home";
 import Header from "../components/Header";
 
 import FullOverlay from "../components/overlay/FullOverlay";
+import { ReactFlowProvider } from "reactflow";
 
 export const AppContext = createContext();
 
@@ -41,40 +42,43 @@ export default function AppProvider() {
   };
 
   return (
+    // Defined the ReactFlowProvider Here to have access to its state everywhere in the appContext
     <div>
-      <AppContext.Provider
-        value={{
-          appState,
-          setAppState,
-          isLogged,
-          setIsLogged,
-          reload,
-          setReload,
-          openLogin,
-          setOpenLogin,
-          OpenSignUp,
-          setOpenSignUp,
-          localServerUrl,
-          setLocalServerUrl,
-          localServerPort,
-          setLocalServerPort,
-          overlay,
-          setOverlay,
-          overlayComponent,
-          setOverlayComponent,
-          save,
-          setSave,
-          fileUsed, setFileUsed,
-          sideBarReload, setSideBarReload
-        }}
-      >
-        <Header />
-        <FullOverlay
-          Component={overlayComponent.Component}
-          {...overlayComponent.props}
-        />
-        {cmpByState[appState]}
-      </AppContext.Provider>
+      <ReactFlowProvider>
+        <AppContext.Provider
+          value={{
+            appState,
+            setAppState,
+            isLogged,
+            setIsLogged,
+            reload,
+            setReload,
+            openLogin,
+            setOpenLogin,
+            OpenSignUp,
+            setOpenSignUp,
+            localServerUrl,
+            setLocalServerUrl,
+            localServerPort,
+            setLocalServerPort,
+            overlay,
+            setOverlay,
+            overlayComponent,
+            setOverlayComponent,
+            save,
+            setSave,
+            fileUsed, setFileUsed,
+            sideBarReload, setSideBarReload
+          }}
+        >
+          <Header />
+          <FullOverlay
+            Component={overlayComponent.Component}
+            {...overlayComponent.props}
+          />
+          {cmpByState[appState]}
+        </AppContext.Provider>
+      </ReactFlowProvider>
     </div>
   );
 }
