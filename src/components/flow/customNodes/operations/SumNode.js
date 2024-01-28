@@ -24,7 +24,7 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
     return (
 
 
-        <div className='nodeSquare flex justify-center items-center' >
+        <div className='nodeSquare drag_Handle flex justify-center items-center' >
             <Handle
                 type="target"
                 position={Position.Left}

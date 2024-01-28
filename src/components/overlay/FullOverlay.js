@@ -12,7 +12,7 @@ export default function FullOverlay({ Component, ...props }) {
     <>
       <div
         aria-live="assertive"
-        className={`z-[9999999] pointer-events-none fixed inset-0 flex items-end px-4 py-6 mt-[48px] sm:items-start sm:p-6 ${overlay ? "backdrop-blur-lg" : ""
+        className={`z-[9999999] pointer-events-none fixed inset-0 flex items-end px-4 py-6 mt-[40px] sm:items-start sm:p-6 ${overlay ? "backdrop-blur-lg" : ""
           }`}
       >
         <div className="flex w-full h-[95%] flex-col items-center space-y-12 my-4">

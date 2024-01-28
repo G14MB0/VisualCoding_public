@@ -57,10 +57,11 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
     return (
 
 
-        <div className='nodeBase min-w-60' >
+        <div className='nodeBase drag_Handle min-w-60' >
             <Handle
                 type="target"
                 position={Position.Left}
+                id='a'
                 isConnectable={isConnectable}
             />
             <div className='flex justify-between items-center mb-2'>

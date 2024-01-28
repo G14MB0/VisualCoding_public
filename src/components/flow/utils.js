@@ -7,7 +7,7 @@ export function openWs(localServerUrl, localServerPort, setWs, setMessage) {
         `ws://${localServerUrl}:${localServerPort}/nodes/ws/info/start`
     ); // Replace with your WebSocket URL
     webSocket.onopen = () => {
-        console.log("WebSocket Connected");
+        // console.log("WebSocket Connected");
     };
     webSocket.onmessage = (event) => {
         // Assuming the message is JSON
@@ -22,7 +22,7 @@ export function openWs(localServerUrl, localServerPort, setWs, setMessage) {
         console.error("WebSocket Error:", error);
     };
     webSocket.onclose = () => {
-        console.log("WebSocket Disconnected");
+        // console.log("WebSocket Disconnected");
     };
     // Set the WebSocket in state
     setWs(webSocket);

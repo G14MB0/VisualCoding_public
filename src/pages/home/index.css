@@ -8,8 +8,13 @@
     @apply border border-[#333] p-4 min-h-12 rounded-lg cursor-grab
 }
 
+
 .nodeSquare {
     @apply border border-[#333] p-4 h-16 w-16 rounded-lg cursor-grab
+}
+
+.nodeFree {
+    @apply border border-[#333] p-4 rounded-lg cursor-grab
 }
 
 .react-flow__node:not(.selected):hover {

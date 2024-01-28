@@ -1,4 +1,4 @@
-import { AddRounded, BalanceRounded, CloseRounded, ContentCutRounded, RemoveRounded } from "@mui/icons-material";
+import { AddRounded, BalanceRounded, CloseRounded, ContentCutRounded, PublicRounded, RemoveRounded } from "@mui/icons-material";
 import ComparatorNode from "./customNodes/ComparatorNode";
 import DebugNode from "./customNodes/DebugNode";
 import FunctionNode from "./customNodes/FunctionNode";
@@ -8,6 +8,7 @@ import MultiplyNode from "./customNodes/operations/MultiplyNode";
 import SubtractNode from "./customNodes/operations/SubtractNode";
 import SumNode from "./customNodes/operations/SumNode";
 import EqualsNode from "./customNodes/operations/EqualsNode";
+import GlobalVarNode from "./customNodes/variables/GlobalVarNode";
 
 
 /* ************************************************* */
@@ -32,15 +33,17 @@ export const getNodeTypes = (updateNodeData) => ({
     DivideNode: (nodeProps) => <DivideNode updateNodeData={updateNodeData} {...nodeProps} />,
     MultiplyNode: (nodeProps) => <MultiplyNode updateNodeData={updateNodeData} {...nodeProps} />,
     EqualsNode: (nodeProps) => <EqualsNode updateNodeData={updateNodeData} {...nodeProps} />,
+    GlobalVarNode: (nodeProps) => <GlobalVarNode updateNodeData={updateNodeData} {...nodeProps} />,
 })
 
-export const getOperation = (type) => {
+export const getAdditionalData = (type) => {
     const operationNodeType = {
-        SumNode: 'sum',
-        MultiplyNode: 'multiply',
-        DivideNode: 'divide',
-        SubtractNode: 'subtract',
-        EqualsNode: 'equals',
+        SumNode: { operation: 'sum' },
+        MultiplyNode: { operation: 'multiply' },
+        DivideNode: { operation: 'divide' },
+        SubtractNode: { operation: 'subtract' },
+        EqualsNode: { operation: 'equals', logic: '=' },
+        GlobalVarNode: { type: 'FunctionNode', isPolling: 'true' },
     }
     return operationNodeType[type]
 }
@@ -55,6 +58,7 @@ export const availableNode = {
     SubtractNode: { name: "Subtract", category: "operation", icon: <RemoveRounded /> },
     MultiplyNode: { name: "Multiply", category: "operation", icon: <CloseRounded /> },
     EqualsNode: { name: "Equals", category: "operation", icon: <BalanceRounded /> },
+    GlobalVarNode: { name: "Global Var", category: "operation", icon: <PublicRounded /> },
 }
 
 
@@ -69,4 +73,5 @@ export const nodeStyles = {
     SubtractNode: { backgroundColor: '#e0e0e0', borderRadius: "10px", transition: "background-color 0.3s", },
     MultiplyNode: { backgroundColor: '#e0e0e0', borderRadius: "10px", transition: "background-color 0.3s", },
     EqualsNode: { backgroundColor: '#e0e0e0', borderRadius: "10px", transition: "background-color 0.3s", },
+    GlobalVarNode: { backgroundColor: '#5dc77a', borderRadius: "10px", transition: "background-color 0.3s", },
 }

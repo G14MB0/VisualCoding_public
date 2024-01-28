@@ -4,27 +4,30 @@ import { useContext } from 'react';
 import { useEffect } from 'react';
 import { AppContext } from '../../../../provider/appProvider';
 import { BalanceRounded, ContentCutRounded } from '@mui/icons-material';
+import Dropdown from '../../../UI/dropdown/Dropdown';
 
 
+const dropArray = ['=', '>', '<']
 
 export default memo(({ data, isConnectable, updateNodeData }) => {
 
     const { } = useContext(AppContext)
+    const [logic, setLogic] = useState(data.logic)
     const [operation, setOperation] = useState(data.operation);
 
     // Call updateNodeData whenever selected changes
     useEffect(() => {
         if (updateNodeData) {
-            updateNodeData(data.id, { ...data, operation: "equals" });
+            updateNodeData(data.id, { ...data, operation: "equals", logic: logic });
 
         }
-    }, [updateNodeData, data.id, operation]);
+    }, [updateNodeData, data.id, logic]);
 
 
     return (
 
 
-        <div className='nodeSquare flex justify-center items-center' >
+        <div className='nodeFree h-24 w-28 drag_Handle flex flex-col justify-around items-center' >
             <Handle
                 type="target"
                 position={Position.Left}
@@ -39,8 +42,12 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
                 id="b"
                 isConnectable={isConnectable}
             />
-            <div className='flex justify-center items-center'>
+            <div className='flex justify-center items-center'
+                title='&uarr; : True   &darr; : False'>
                 <BalanceRounded fontSize='large' />
+            </div>
+            <div className='mt-2'>
+                <Dropdown elements={dropArray} onChange={setLogic} elementSelected={logic} />
             </div>
 
             <Handle

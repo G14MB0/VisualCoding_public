@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
 import fetchApi from '../../utils/request/requests';
 import { AppContext } from '../../provider/appProvider';
-import { CloseRounded, DeleteRounded } from '@mui/icons-material';
+import { CloseRounded, DeleteRounded, PublicRounded } from '@mui/icons-material';
 import Confirm from '../overlay/confirm';
 import { availableNode, nodeStyles } from './nodeDefinition';
+import GlobalVar from '../UI/cards/GlobalVar';
 
 
 
@@ -16,6 +17,16 @@ export default () => {
         event.dataTransfer.setData('application/reactflow/style', style);
         event.dataTransfer.effectAllowed = 'move';
     };
+
+    const handleOpenGlobalVar = (e) => {
+        e.preventDefault()
+        setOverlay(true)
+        setOverlayComponent({
+            Component: GlobalVar,
+            props: {}
+        })
+    }
+
 
     const handleDeleteNode = (e, nodeName) => {
         e.preventDefault();
@@ -82,8 +93,14 @@ export default () => {
                         </div>
                     </div>
                 ))}
-            </div>
 
+            </div>
+            {/* <div className='h-full'></div> */}
+            <div className='h-10 py-2 flex items-center absolute bottom-0 '>
+                <div onClick={handleOpenGlobalVar}>
+                    <PublicRounded className='text-blue-900 cursor-pointer' />
+                </div>
+            </div>
             {/* <div className="dndnode input" onDragStart={(event) => onDragStart(event, 'input')} draggable>
                 Trigger
             </div>

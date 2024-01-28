@@ -11,6 +11,7 @@ function classNames(...classes) {
 export default function Dropdown({
 	elements,
 	onChange,
+	elementSelected = null,
 	isLoading = false,
 	disabled = false,
 }) {
@@ -18,13 +19,13 @@ export default function Dropdown({
 	const defaultElement = "Loading...";
 
 	const [selected, setSelected] = useState(() =>
-		elements ? elements[0] : null
+		elements ? elementSelected ? elementSelected : elements[0] : null
 	);
 	const [flag, setFlag] = useState(0);
 
 	useEffect(() => {
 		if (elements && elements.length > 0 && flag === 0) {
-			setSelected(elements[0]);
+			setSelected(elementSelected ? elementSelected : elements[0]);
 			setFlag(1);
 		}
 	}, [elements]);

@@ -9,11 +9,11 @@ import SideBar from './SideBar';
 import fetchApi from '../../utils/request/requests';
 import { AppContext } from '../../provider/appProvider';
 import ComparatorNode from './customNodes/ComparatorNode';
-import { PlayArrowRounded, Save, SaveSharp, SavingsRounded, StopRounded, UploadFile } from '@mui/icons-material';
+import { CachedRounded, PlayArrowRounded, Save, SaveSharp, SavingsRounded, StopRounded, UploadFile } from '@mui/icons-material';
 import { closeWs, openWs } from './utils';
 import DebugNode from './customNodes/DebugNode';
 import SumNode from './customNodes/operations/SumNode';
-import { getNodeTypes, getOperation } from './nodeDefinition';
+import { getNodeTypes, getAdditionalData } from './nodeDefinition';
 import SimpleFloatingEdge from './customNodes/SimpleFloatingEdge';
 
 
@@ -124,7 +124,7 @@ export default function FlowPage() {
                 position,
                 dragHandle: ".drag_Handle",
                 style: styleParsed,
-                data: { ...dataParsed, label: `${type} node`, id: localId, style: style, operation: getOperation(type) },
+                data: { ...dataParsed, label: `${type} node`, id: localId, style: style, ...getAdditionalData(type) },
             };
 
             setNodes((nds) => nds.concat(newNode));
@@ -142,7 +142,6 @@ export default function FlowPage() {
             nodes,
             edges
         };
-        console.log(data)
         try {
             const response = await fetchApi("POST",
                 localServerUrl,
@@ -161,21 +160,28 @@ export default function FlowPage() {
 
     // Helper function to compare significant changes in nodes and edges
     const hasSignificantChange = (newNodes, newEdges, lastNodes, lastEdges) => {
-        // Example: Compare based on node data and edge connections, ignoring positions
+        // Check if the number of nodes or edges has changed
+        const nodesCountChanged = newNodes.length !== lastNodes.length;
+        const edgesCountChanged = newEdges.length !== lastEdges.length;
+
+        // Compare node data, ignoring positions
         const nodesChanged = newNodes.some((node, index) => {
-            if (lastNodes[index] && (node.data !== lastNodes[index].data)) {
-                return true;
-            }
-            return false;
+            const lastNode = lastNodes[index];
+            // Check if the node exists in both arrays and if data has changed
+            return lastNode ? (node.data !== lastNode.data) : true;
         });
 
-        const edgesChanged = newEdges.length !== lastEdges.length || newEdges.some((edge, index) => {
+        // Compare edge data
+        const edgesChanged = newEdges.some((edge, index) => {
             const lastEdge = lastEdges[index];
-            return !lastEdge || edge.source !== lastEdge.source || edge.target !== lastEdge.target || edge.data !== lastEdge.data;
+            // Check if the edge exists in both arrays and if source, target, or data has changed
+            return lastEdge ? (edge.source !== lastEdge.source || edge.target !== lastEdge.target || edge.data !== lastEdge.data) : true;
         });
 
-        return nodesChanged || edgesChanged;
+        // Return true if any condition is met
+        return nodesCountChanged || edgesCountChanged || nodesChanged || edgesChanged;
     };
+
 
 
     /* ************************************************* */
@@ -195,7 +201,14 @@ export default function FlowPage() {
 
             const highestNodeId = getHighestNodeId(response.nodes);
             id = highestNodeId; // Update the id variable to start from the highest existing ID
-            setNodes((nds) => nds.concat(response.nodes))
+            // Add 'dragHandle' property to each node
+            const updatedNodes = response.nodes.map(node => ({
+                ...node,
+                dragHandle: '.drag_Handle'
+            }));
+
+            // Concatenate the updated nodes with the existing ones
+            setNodes((nds) => nds.concat(updatedNodes));
 
             // Ensure each edge has a unique ID
             const uniqueEdges = response.edges.map((edge, index) => {
@@ -247,12 +260,29 @@ export default function FlowPage() {
 
             setNodes(history.nodes[history.currentIndex - 1]);
             setEdges(history.edges[history.currentIndex - 1]);
+            console.log(history.currentIndex)
             setHistory((prevHistory) => ({
                 ...prevHistory,
                 currentIndex: prevHistory.currentIndex - 1
             }));
         }
     }, [history, setNodes, setEdges]);
+
+    // Redo function to revert to the next state
+    const redo = useCallback(() => {
+        console.log(history)
+        if (history.currentIndex < history.nodes.length - 1) {
+            console.log("De-Annullando")
+
+            setNodes(history.nodes[history.currentIndex + 1]);
+            setEdges(history.edges[history.currentIndex + 1]);
+            setHistory((prevHistory) => ({
+                ...prevHistory,
+                currentIndex: prevHistory.currentIndex + 1
+            }));
+        }
+    }, [history, setNodes, setEdges]);
+
 
     // Setup keyboard event listener for undo (Ctrl+Z)
     useEffect(() => {
@@ -268,6 +298,21 @@ export default function FlowPage() {
             document.removeEventListener('keydown', handleKeyDown);
         };
     }, [undo]);
+
+    // Setup keyboard event listener for redo (Ctrl+Y)
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.ctrlKey && event.key === 'y') {
+                redo();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [redo]);
 
 
     // change css to active (in execution) nodes

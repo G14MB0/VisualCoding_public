@@ -45,7 +45,7 @@ export default memo(({ data, isConnectable, updateNodeData, connectedNodes = {} 
     return (
 
 
-        <div className='nodeBase min-w-60' >
+        <div className='nodeBase drag_Handle min-w-60' >
             <Handle
                 type="target"
                 id="a"
