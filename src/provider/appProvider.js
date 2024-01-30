@@ -4,6 +4,9 @@ import Header from "../components/Header";
 
 import FullOverlay from "../components/overlay/FullOverlay";
 import { ReactFlowProvider } from "reactflow";
+import Trace from "../pages/Trace/Trace";
+import Studio from "../pages/Studio/Studio";
+import Setting from "../pages/setting/Setting";
 
 export const AppContext = createContext();
 
@@ -19,6 +22,8 @@ export default function AppProvider() {
   //used to set the JWT token
   const [reload, setReload] = useState(null);
   const [sideBarReload, setSideBarReload] = useState(null);
+  const [componentReload, setComponentReload] = useState(null);
+
   //used to open the login and signup form
   const [openLogin, setOpenLogin] = useState(false);
   const [OpenSignUp, setOpenSignUp] = useState(false);
@@ -35,10 +40,15 @@ export default function AppProvider() {
   const [save, setSave] = useState(false)
   const [fileUsed, setFileUsed] = useState("")
 
+  const [isDebug, setIsDebug] = useState(false)
+
 
   //sono tutte le mie 'pagine'
   const cmpByState = {
     Home: <Home />,
+    Trace: <Trace />,
+    Studio: <Studio />,
+    Settings: <Setting />
   };
 
   return (
@@ -68,7 +78,9 @@ export default function AppProvider() {
             save,
             setSave,
             fileUsed, setFileUsed,
-            sideBarReload, setSideBarReload
+            sideBarReload, setSideBarReload,
+            componentReload, setComponentReload,
+            isDebug, setIsDebug
           }}
         >
           <Header />

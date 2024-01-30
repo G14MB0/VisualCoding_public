@@ -19,7 +19,7 @@ import SimpleFloatingEdge from './customNodes/SimpleFloatingEdge';
 
 
 const connectionLineStyle = { stroke: '#333333', type: "smootstep" };
-const snapGrid = [20, 20];
+const snapGrid = [10, 10];
 
 const MIN_DISTANCE = 850;
 
@@ -326,6 +326,9 @@ export default function FlowPage() {
                     if (activeNode[node.id] && activeNode[node.id].hasOwnProperty('value')) {
                         node.data = { ...node.data, value: activeNode[node.id]["value"] }
                     }
+                    if (activeNode[node.id] && activeNode[node.id].hasOwnProperty('exec_time')) {
+                        node.data = { ...node.data, exec_value: activeNode[node.id]["exec_time"] }
+                    }
                     // Check if activeNode for the current node exists and has the isRunning property
                     if (activeNode[node.id] && activeNode[node.id].hasOwnProperty('isRunning')) {
                         // If the node is running, set the background color to azure
@@ -400,7 +403,7 @@ export default function FlowPage() {
                 attributionPosition="bottom-left"
                 deleteKeyCode={"Delete"}
             >
-                <Background variant={BackgroundVariant.Cross} gap={50} />
+                <Background variant={BackgroundVariant.Cross} gap={30} />
                 <MiniMap
                 // nodeStrokeColor={(n) => {
                 //     if (n.type === 'input') return '#0041d0';

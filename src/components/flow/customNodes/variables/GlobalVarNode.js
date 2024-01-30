@@ -20,7 +20,7 @@ const initialPythonCode = `async def FunctionGlobalVar(data):
 
 export default memo(({ data, isConnectable, updateNodeData }) => {
 
-    const { localServerUrl, localServerPort, reload } = useContext(AppContext)
+    const { localServerUrl, localServerPort, reload, componentReload } = useContext(AppContext)
     const [code, setCode] = useState(data.code);
     const [replacementKey, setReplacementKey] = useState(data.replacementKey);
     const [reloadLocal, setReloadLocal] = useState(false)
@@ -44,7 +44,7 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
             }
         );
 
-    }, [, reload])
+    }, [, reload, componentReload])
 
 
     return (

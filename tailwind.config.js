@@ -10,6 +10,15 @@ module.exports = {
       sm: "600px",
     },
     extend: {
+      boxShadow: {
+        custom: "0px 0px 10px 0px rgba(0, 0, 0, 0.2)",
+        custom2: "0px 0px 6px -2px rgba(0, 0, 0, 0.4)",
+      },
+      animation: {
+        pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        pulse2: "pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        pulse3: "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      },
       colors: {
         // Light mode
         "background-light": "#FFFFFF",

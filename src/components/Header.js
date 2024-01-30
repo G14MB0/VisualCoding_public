@@ -2,22 +2,24 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../provider/appProvider";
 import CloseIcon from "@mui/icons-material/Close";
 import { Dialog } from "@headlessui/react";
+import { Switch } from "@mui/material";
 
 const navigation_array = [
   { name: "Home", href: "#" },
+  { name: "Trace", href: "#" },
   { name: "Studio", href: "#" },
-  { name: "Setting", href: "#" },
+  { name: "Settings", href: "#" },
 ];
 
 export default function Header() {
-  const { setOpenLogin, setOpenSignUp, setAppState, isLogged, setIsLogged, fileUsed } =
+  const { setOpenLogin, setOpenSignUp, setAppState, isLogged, setIsLogged, fileUsed, setIsDebug, appState } =
     useContext(AppContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [navigation, setNavigation] = useState([]);
+  const [navigation, setNavigation] = useState(navigation_array);
 
-  useEffect(() => {
-    isLogged ? setNavigation(navigation_array) : setNavigation([]);
-  }, [isLogged]);
+  // useEffect(() => {
+  //   isLogged ? setNavigation(navigation_array) : setNavigation([]);
+  // }, [isLogged]);
 
   return (
     <header className="bg-background-light-alt relative w-[100%] h-10 z-10">
@@ -36,7 +38,8 @@ export default function Header() {
                 setAppState(e.target.name);
               }}
               href={item.href}
-              className="text-sm font-semibold leading-6 text-gray-900 dark:text-white"
+              className={`text-sm leading-6 text-gray-900 dark:text-white ${item.name === appState ? 'font-semibold text-blue-500' : ''}`}
+
             >
               {item.name}
             </a>
@@ -60,6 +63,12 @@ export default function Header() {
             <span className="sr-only">Open main menu</span>
             {/* <Bars3Icon className="h-6 w-6" aria-hidden="true" /> */}
           </button>
+        </div>
+        <div className="flex items-center font-mono text-xs">
+          Debug Mode{" "}
+          <div className="ml-1">
+            <Switch onChange={(event) => setIsDebug(event.target.checked)} />
+          </div>
         </div>
         <div className="flex ">
           <button

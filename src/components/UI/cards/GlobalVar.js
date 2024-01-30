@@ -6,7 +6,7 @@ import Confirm from '../../overlay/confirm';
 import { AddRounded, DeleteRounded } from '@mui/icons-material';
 
 export default function GlobalVar() {
-    const { localServerUrl, localServerPort, setOverlay, setOverlayComponent } = useContext(AppContext);
+    const { localServerUrl, localServerPort, setOverlay, setOverlayComponent, componentReload, setComponentReload } = useContext(AppContext);
     const [globalVars, setGlobalVars] = useState([])
     const [changedSettings, setChangedSettings] = useState({});
     const [reloadLocal, setReloadLocal] = useState(false)
@@ -31,6 +31,7 @@ export default function GlobalVar() {
                 data
             );
             setReloadLocal(!reloadLocal)
+            setComponentReload(!componentReload)
         }
 
         setOverlay(true);

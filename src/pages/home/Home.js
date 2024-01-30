@@ -1,8 +1,5 @@
 
 import "./index.css";
-import LogInOverlay from "../../components/overlay/LogInOverlay";
-import SignUpOverlay from "../../components/overlay/SignUpOverlay";
-import FlowPage from "../../components/flow/FlowPage";
 // const { ipcRenderer } = window.require("electron");
 
 export default function Home() {
@@ -19,12 +16,9 @@ export default function Home() {
 
   return (
     <div className={"main"}>
-      <LogInOverlay />
-      <SignUpOverlay />
-      <div className="w-full h-[calc(100vh-48px)]">
-        <FlowPage />
+      <div className="h-[105vh]">
+        <iframe src='https://my.spline.design/interactivesparkletterwithparticleeffectcopy-371a9aa1dd45ba33b88383284d7a637c/' frameborder='0' width='100%' height='100%'></iframe>
       </div>
-
     </div>
   );
 }
