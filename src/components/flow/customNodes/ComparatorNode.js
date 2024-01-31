@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 
 export default memo(({ data, isConnectable, updateNodeData, connectedNodes = {} }) => {
 
-    const { setOverlay, setOverlayComponent, setSave, save } = useContext(AppContext)
+    const { setOverlay, setOverlayComponent, setSave, save, isDebug } = useContext(AppContext)
     const [code, setCode] = useState(data.code);
 
     const handleOpenEditor = (e) => {
@@ -61,6 +61,12 @@ export default memo(({ data, isConnectable, updateNodeData, connectedNodes = {} 
                 </div>
             </div>
             <pre className='bg-indigo-50 px-2 leading-3 py-2'><code className='font-mono text-xs font-[50]'>{code}</code></pre>
+            <div className={`${isDebug ? "mt-4" : ""}`}>
+                {isDebug ?
+                    (<pre className='bg-indigo-50 px-2 leading-3 py-2'><code className='font-mono text-xs font-[50]'>{JSON.stringify(data.value, null, 2).replace(/\\n/g, '\n')}</code></pre>)
+                    :
+                    ""}
+            </div>
             <Handle
                 type="source"
                 position={Position.Right}

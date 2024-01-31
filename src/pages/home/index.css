@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    overflow-y: hidden;
+}
 
 .nodeBase {
     @apply border border-[#333] p-4 min-h-12 rounded-lg cursor-grab
@@ -178,4 +181,25 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+
+
+
+.scroller {
+    height: calc(100%-48px);
+}
+
+.scolatela::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.scolatela::-webkit-scrollbar-thumb {
+    background-color: rgba(211, 221, 223, 0.726);
+    border-radius: 5px;
+}
+
+.scolatela::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(151, 151, 151);
 }

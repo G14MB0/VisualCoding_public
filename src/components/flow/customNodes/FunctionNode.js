@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 
 export default memo(({ data, isConnectable, updateNodeData }) => {
 
-    const { setOverlay, setOverlayComponent, setSave, save, localServerUrl, localServerPort, sideBarReload, setSideBarReload } = useContext(AppContext)
+    const { setOverlay, setOverlayComponent, setSave, save, localServerUrl, localServerPort, sideBarReload, setSideBarReload, isDebug } = useContext(AppContext)
     const [code, setCode] = useState(data.code);
     const [name, setName] = useState("");
 
@@ -88,6 +88,12 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
                         Save as model
                     </button>
                 </form>
+            </div>
+            <div className={`${isDebug ? "mt-4" : ""}`}>
+                {isDebug ?
+                    (<pre className='bg-indigo-50 px-2 leading-3 py-2'><code className='font-mono text-xs font-[50]'>{data.value && JSON.stringify(data.value, null, 2) && JSON.stringify(data.value, null, 2).replace(/\\n/g, '\n')}</code></pre>)
+                    :
+                    ""}
             </div>
             <Handle
                 type="source"

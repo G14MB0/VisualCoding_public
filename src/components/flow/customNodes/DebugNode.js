@@ -27,7 +27,7 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
                 </div>
 
             </div>
-            <pre className='bg-indigo-50 px-2 leading-3 py-2'><code className='font-mono text-xs font-[50]'>{JSON.stringify(data.value, null, 2)}</code></pre>
+            <pre className='bg-indigo-50 px-2 leading-3 py-2'><code className='font-mono text-xs font-[50]'>{data.value && JSON.stringify(data.value, null, 2) && JSON.stringify(data.value, null, 2).replace(/\\n/g, '\n')}</code></pre>
 
 
         </ div>

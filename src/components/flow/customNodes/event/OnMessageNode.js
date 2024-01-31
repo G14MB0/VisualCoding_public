@@ -1,13 +1,16 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useContext, useEffect, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import fetchApi from '../../../../utils/request/requests';
+import { AppContext } from '../../../../provider/appProvider';
+import Dropdown from '../../../UI/dropdown/Dropdown';
 
 
 
 
 export default memo(({ data, isConnectable, updateNodeData }) => {
 
-    const [propagatedSignal, setPropagatedSignal] = useState("250.OperationalModeSts")
+    const { componentReload, localServerUrl, localServerPort, isDebug } = useContext(AppContext)
+    const [propagatedSignal, setPropagatedSignal] = useState(data.propagatedSignal)
     const [allPropagated, setAllPropagated] = useState([])
     // const [propagatedSignal, setPropagatedSignal] = useState(data.propagatedSignal)
     // Call updateNodeData whenever selected changes
@@ -18,13 +21,14 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
     }, [updateNodeData, data.id, propagatedSignal]);
 
     useEffect(() => {
-        fetchApi
+        fetchApi("GET", localServerUrl, localServerPort, "pythonbus/propagatedvalues").then((response) =>
+            setAllPropagated(response))
     }, [, componentReload])
 
 
 
     return (
-        <div className='nodeBase'>
+        <div className='nodeBase min-w-60'>
             {/* <Handle
                 type="target"
                 position={Position.Left}
@@ -52,10 +56,16 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
                         min="0"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
                     />
+                </div>*/}
+                <div className='w-full drag_Handle'>
+                    <Dropdown elements={allPropagated} onChange={setPropagatedSignal} />
                 </div>
-                <div className='w-[50%] drag_Handle'>
-                    <Dropdown elements={mu} onChange={setSelected} />
-                </div> */}
+            </div>
+            <div className={`${isDebug ? "mt-4" : ""}`}>
+                {isDebug ?
+                    (<pre className='bg-indigo-50 px-2 leading-3 py-2'><code className='font-mono text-xs font-[50]'>{data.value && JSON.stringify(data.value, null, 2) && JSON.stringify(data.value, null, 2).replace(/\\n/g, '\n')}</code></pre>)
+                    :
+                    ""}
             </div>
             <Handle
                 type="source"

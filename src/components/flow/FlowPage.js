@@ -34,7 +34,7 @@ let id = 0;
 const getId = () => `node_${++id}`;
 
 export default function FlowPage() {
-    const { localServerUrl, localServerPort, save, setSave, fileUsed, setFileUsed, reload, setReload } =
+    const { localServerUrl, localServerPort, save, setSave, fileUsed, setFileUsed, reload, setReload, setIsRunning, isRunning } =
         useContext(AppContext);
 
 
@@ -142,6 +142,7 @@ export default function FlowPage() {
             nodes,
             edges
         };
+        console.log(data)
         try {
             const response = await fetchApi("POST",
                 localServerUrl,
@@ -366,9 +367,9 @@ export default function FlowPage() {
             <div className='absolute top-13 right-0 z-10 px-2 flex justify-between items-center lg:w-[calc(100%-250px)] w-[calc(100%-150px)] bg-neutral-200 shadow-inner'>
                 <div>
                     <button className=''
-                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/run"); openWs(localServerUrl, localServerPort, setWs, setActiveNode) }}><PlayArrowRounded className='text-gray-700' /></button>
+                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/run"); openWs(localServerUrl, localServerPort, setWs, setActiveNode, setIsRunning); setIsRunning(true) }}><PlayArrowRounded className='text-gray-700' /></button>
                     <button className=''
-                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); closeWs(ws, setWs) }}><StopRounded className='text-gray-700' /></button>
+                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); closeWs(ws, setWs);; setIsRunning(false) }}><StopRounded className='text-gray-700' /></button>
                 </div>
                 <div className='w-12'>{ }</div>
 
@@ -402,6 +403,10 @@ export default function FlowPage() {
                 fitView
                 attributionPosition="bottom-left"
                 deleteKeyCode={"Delete"}
+                nodesDraggable={!isRunning}
+                nodesConnectable={!isRunning}
+                elementsSelectable={!isRunning}
+                paneMoveable={!isRunning}
             >
                 <Background variant={BackgroundVariant.Cross} gap={30} />
                 <MiniMap

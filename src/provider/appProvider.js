@@ -41,6 +41,8 @@ export default function AppProvider() {
   const [fileUsed, setFileUsed] = useState("")
 
   const [isDebug, setIsDebug] = useState(false)
+  const [isRunning, setIsRunning] = useState(false);
+
 
 
   //sono tutte le mie 'pagine'
@@ -80,7 +82,8 @@ export default function AppProvider() {
             fileUsed, setFileUsed,
             sideBarReload, setSideBarReload,
             componentReload, setComponentReload,
-            isDebug, setIsDebug
+            isDebug, setIsDebug,
+            setIsRunning, isRunning
           }}
         >
           <Header />

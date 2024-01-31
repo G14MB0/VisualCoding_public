@@ -139,7 +139,7 @@ export default function TraceTable() {
   const columns = tableHeader;
 
   return (
-    <div className="px-4 mx-auto my-8">
+    <div className="px-4 mx-auto my-8 ">
       <div className="flex w-full justify-end items-center my-4">
         <div className="cursor-pointer mr-1" onClick={openWs}>
           <PlayArrowRounded className="text-gray-700" />
@@ -236,38 +236,81 @@ export default function TraceTable() {
                   </AccordionHeader>
                   {typeof msg[1] === "object" && msg[1] !== null && (
                     <AccordionBody className="pt-2">
-                      <table className="table-auto divide-y ml-12">
-                        <thead>
-                          <tr>
-                            <th
-                              className="px-4 pb-2"
-                              style={{
-                                textAlign: "left",
-                                fontFamily: "Arial, sans-serif",
-                              }}
-                            >
-                              Signal Name
-                            </th>
-                            <th
-                              className="px-4 pb-2"
-                              style={{
-                                textAlign: "left",
-                                fontFamily: "Arial, sans-serif",
-                              }}
-                            >
-                              Value
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {Object.entries(msg[1]).map(([key, value], index) => (
-                            <tr key={index}>
-                              <td className="px-4">{key}</td>
-                              <td className="px-4">{value.toString()}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                      <div className="grid grid-cols-2">
+                        <div className="mb-auto">
+                          <table className="table-auto divide-y ml-12">
+                            <thead>
+                              <tr>
+                                <th
+                                  className="px-4 pb-2"
+                                  style={{
+                                    textAlign: "left",
+                                    fontFamily: "Arial, sans-serif",
+                                  }}
+                                >
+                                  Signal Name
+                                </th>
+                                <th
+                                  className="px-4 pb-2"
+                                  style={{
+                                    textAlign: "left",
+                                    fontFamily: "Arial, sans-serif",
+                                  }}
+                                >
+                                  Value
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {Object.entries(msg[1])
+                                .filter(([key, value], index) => !["rawMessageValue", "msgTimeStamp", "receivedFromChannelName", "msgID"].includes(key))
+                                .map(([key, value], index) => (
+                                  <tr key={index}>
+                                    <td className="px-4">{key}</td>
+                                    <td className="px-4">{value.toString()}</td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        <div className="mb-auto">
+                          <table className=" divide-y ml-12">
+                            <thead>
+                              <tr>
+                                <th
+                                  className="px-4 pb-2"
+                                  style={{
+                                    textAlign: "left",
+                                    fontFamily: "Arial, sans-serif",
+                                  }}
+                                >
+                                  Additonal Info
+                                </th>
+                                <th
+                                  className="px-4 pb-2"
+                                  style={{
+                                    textAlign: "left",
+                                    fontFamily: "Arial, sans-serif",
+                                  }}
+                                >
+                                  Value
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {Object.entries(msg[1])
+                                .filter(([key, value], index) => ["rawMessageValue", "msgTimeStamp", "receivedFromChannelName", "msgID"].includes(key))
+                                .map(([key, value], index) => (
+                                  <tr key={index}>
+                                    <td className="px-4">{key}</td>
+                                    <td className="px-4">{value.toString()}</td>
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
                     </AccordionBody>
                   )}
                 </Accordion>

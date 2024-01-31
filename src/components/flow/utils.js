@@ -1,6 +1,6 @@
 import { Position, internalsSymbol } from 'reactflow';
 
-export function openWs(localServerUrl, localServerPort, setWs, setMessage) {
+export function openWs(localServerUrl, localServerPort, setWs, setMessage, setIsRunning) {
     // Initialize the WebSocket connection
 
     const webSocket = new WebSocket(
@@ -22,6 +22,7 @@ export function openWs(localServerUrl, localServerPort, setWs, setMessage) {
         console.error("WebSocket Error:", error);
     };
     webSocket.onclose = () => {
+        setIsRunning(false)
         // console.log("WebSocket Disconnected");
     };
     // Set the WebSocket in state
@@ -30,6 +31,7 @@ export function openWs(localServerUrl, localServerPort, setWs, setMessage) {
     // Clean up on unmount
     return () => {
         webSocket.close();
+        setIsRunning(false)
     };
 }
 

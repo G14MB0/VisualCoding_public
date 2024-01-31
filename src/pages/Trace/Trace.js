@@ -5,8 +5,8 @@ import ConfigurationTableDAIO from "./ConfigurationTableDAIO"
 
 export default function Trace() {
     return (
-        <>
-            <div className=" w-full h-full pt-10 grid grid-cols-11">
+        <div className='overflow-y-scroll scolatela h-[100vh]'>
+            <div className=" w-full pt-10 grid grid-cols-11">
                 <div className="col-span-6">
                     <ConfigurationTableCan />
                 </div>
@@ -14,9 +14,9 @@ export default function Trace() {
                     <ConfigurationTableDAIO />
                 </div>
             </div>
-            <div>
+            <div className='mb-20'>
                 <TraceTable />
             </div>
-        </>
+        </ div>
     )
 }
