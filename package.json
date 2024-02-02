@@ -1,7 +1,8 @@
 {
   "homepage": ".",
-  "name": "react-electron-template",
-  "author": "Gianmaria Castaldini",
+  "name": "ready2flow",
+  "author": "Gianmaria Castaldini - SD35602 - gianmaria.castaldini@external.stellantis.com",
+  "description": "Let the flow be with you!",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -39,12 +40,20 @@
     "electron:start": "electron ./public/main.js"
   },
   "build": {
-    "appId": "asdasdasdad",
+    "appId": "142536748596",
     "files": [
       "dist/**/*",
       "build/**/*",
       "node_modules/**/*",
-      "package.json"
+      "preload.js",
+      "package.json",
+      "tailwind.config.js"
+    ],
+    "win": {
+      "icon": "public/logo.png"
+    },
+    "extraResources": [
+      "server/**/*"
     ],
     "directories": {
       "buildResources": "assets"

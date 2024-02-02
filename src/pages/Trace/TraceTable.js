@@ -133,6 +133,7 @@ export default function TraceTable() {
       //       );
       //     }
       //   });
+
     }
   }, [messages]);
 
@@ -224,8 +225,8 @@ export default function TraceTable() {
                       </div>
                       <div className="whitespace-nowrap px-3 text-xs font-mono font-light text-gray-900 w-1/3">
                         {msg[1] &&
-                          (typeof msg[1] === "object" && msg[1] !== null
-                            ? JSON.stringify(msg[1]["rawMessageValue"] ?? "")
+                          (typeof msg[1] === "object" && msg[1] !== null && msg[1]["__debugData"]
+                            ? JSON.stringify(msg[1]["__debugData"]["rawMessageValue"] ?? "")
                             : JSON.stringify(msg[1] ?? "")
                           )
                             .replace(/^"|"$/g, "") // Remove enclosing quotes from JSON string
@@ -263,7 +264,7 @@ export default function TraceTable() {
                             </thead>
                             <tbody>
                               {Object.entries(msg[1])
-                                .filter(([key, value], index) => !["rawMessageValue", "msgTimeStamp", "receivedFromChannelName", "msgID"].includes(key))
+                                .filter(([key, value], index) => !["__debugData", "rawMessageValue", "msgTimeStamp", "receivedFromChannelName", "msgID"].includes(key))
                                 .map(([key, value], index) => (
                                   <tr key={index}>
                                     <td className="px-4">{key}</td>
@@ -297,7 +298,7 @@ export default function TraceTable() {
                                 </th>
                               </tr>
                             </thead>
-                            <tbody>
+                            {/* <tbody>
                               {Object.entries(msg[1])
                                 .filter(([key, value], index) => ["rawMessageValue", "msgTimeStamp", "receivedFromChannelName", "msgID"].includes(key))
                                 .map(([key, value], index) => (
@@ -306,6 +307,16 @@ export default function TraceTable() {
                                     <td className="px-4">{value.toString()}</td>
                                   </tr>
                                 ))}
+                            </tbody> */}
+                            <tbody>
+                              {msg[1] && msg[1].__debugData &&
+                                Object.entries(msg[1].__debugData).map(([key, value], index) => (
+                                  <tr key={index}>
+                                    <td className="px-4">{key}</td>
+                                    <td className="px-4">{value.toString()}</td>
+                                  </tr>
+                                ))
+                              }
                             </tbody>
                           </table>
                         </div>

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Tray, Menu } = require("electron");
+const { app, BrowserWindow, ipcMain, Tray, Menu, globalShortcut } = require("electron");
 const isDev = require("electron-is-dev");
 const path = require("path");
 const { spawn } = require("child_process");
@@ -7,10 +7,12 @@ const kill = require("tree-kill");
 const { autoUpdater } = require("electron-updater");
 const bonjour = require("bonjour")();
 
-const BACKEND_PATH = "server/server.exe"; //the relative path from root folder of backend executable (if executable)
+const BACKEND_PATH = "server\\R2F_0_1_0\\R2F_0_1_0.exe"; //the relative path from root folder of backend executable (if executable)
 const CLOSE_ALL_TIMEOUT = 3000; // how many ms to wait until close the fronend if backend can't be closed.
 const checkForUpdatesInterval = 5 * 60 * 1000; // Check every 5 min. If set to 0, it runs only at startup
 const serverPort = 12346; // make sure is the same as in the "start" react snippet in package.json
+
+let _avoidOverStarting = 0
 
 async function discoverUpdateServer() {
   return new Promise((resolve, reject) => {
@@ -278,32 +280,55 @@ setInterval(() => {
 app.on("ready", createWindow);
 app.on("ready", setupAutoUpdater);
 
+
+// // Disable reload b ctrl+r
+// app.on('browser-window-focus', function () {
+//   globalShortcut.register("CommandOrControl+R", () => {
+//     console.log("CommandOrControl+R is pressed: Shortcut Disabled");
+//   });
+//   globalShortcut.register("F5", () => {
+//     console.log("F5 is pressed: Shortcut Disabled");
+//   });
+// });
+
+// app.on('browser-window-blur', function () {
+//   globalShortcut.unregister('CommandOrControl+R');
+//   globalShortcut.unregister('F5');
+// });
+
 app
   .whenReady()
   .then(() => {
-    runExeFile();
+    if (_avoidOverStarting === 0) {
+      runExeFile();
 
-    console.log("START UPDATE FETCH");
-    autoUpdater.checkForUpdatesAndNotify();
+      console.log("START UPDATE FETCH");
+      autoUpdater.checkForUpdatesAndNotify();
 
-    tray = new Tray(`${__dirname}\\tray.png`);
-    const mainWindow = BrowserWindow.getFocusedWindow();
-    const contextMenu = Menu.buildFromTemplate([
-      {
-        label: "Open",
-        click: () => {
-          mainWindow.show();
-        },
-      },
-      {
-        label: "Quit",
-        click: () => {
-          handleQuitApp();
-        },
-      },
-    ]);
-    tray.setToolTip("React-electron-Template");
-    tray.setContextMenu(contextMenu);
+      // Ensure only one tray instance is created
+      if (!tray) { // Check if tray doesn't already exist
+        tray = new Tray(`${__dirname}\\tray.png`);
+        const contextMenu = Menu.buildFromTemplate([
+          {
+            label: "Open",
+            click: () => {
+              const mainWindow = BrowserWindow.getFocusedWindow();
+              mainWindow.show();
+            },
+          },
+          {
+            label: "Quit",
+            click: () => {
+              handleQuitApp();
+            },
+          },
+        ]);
+        tray.setToolTip("React-electron-Template");
+        tray.setContextMenu(contextMenu);
+      }
+    }
+    _avoidOverStarting = 1
+
   })
   .catch(console.log);
 
