@@ -23,9 +23,8 @@ export default function ButtonSecondary({
     <button
       disabled={disabled}
       onClick={onClick}
-      className={`my-2 relative progress-button overflow-hidden ${
-        disabled ? "buttonDisabled" : "buttonSecondary"
-      }`}
+      className={`my-2 relative progress-button overflow-hidden ${disabled ? "buttonDisabled" : "buttonSecondary"
+        }`}
     >
       {isLoading ? (
         <span

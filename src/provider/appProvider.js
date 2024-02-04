@@ -1,14 +1,17 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import Home from "../pages/home/Home";
 import Header from "../components/Header";
 
 import FullOverlay from "../components/overlay/FullOverlay";
-import { ReactFlowProvider } from "reactflow";
+import { ReactFlowProvider, useEdgesState, useNodesState } from "reactflow";
 import Trace from "../pages/Trace/Trace";
 import Studio from "../pages/Studio/Studio";
 import Setting from "../pages/setting/Setting";
 
 export const AppContext = createContext();
+
+const initialNodes = [];
+const initialEdges = [];
 
 export default function AppProvider() {
   //The app state, used by header to change the main state
@@ -20,7 +23,7 @@ export default function AppProvider() {
   //Login state
   const [isLogged, setIsLogged] = useState(false);
   //used to set the JWT token
-  const [reload, setReload] = useState(null);
+  const [reload, setReload] = useState(false);
   const [sideBarReload, setSideBarReload] = useState(null);
   const [componentReload, setComponentReload] = useState(null);
 
@@ -43,6 +46,18 @@ export default function AppProvider() {
   const [isDebug, setIsDebug] = useState(false)
   const [isRunning, setIsRunning] = useState(false);
 
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+  // History state to keep track of past node and edge states
+  const [history, setHistory] = useState({ nodes: [], edges: [], currentIndex: -1 });
+
+  const [globalWs, setGlobalWs] = useState(null);
+  const [activeNode, setActiveNode] = useState({});
+
+  useEffect(() => {
+    console.log(reload)
+
+  }, [reload])
 
 
   //sono tutte le mie 'pagine'
@@ -83,7 +98,12 @@ export default function AppProvider() {
             sideBarReload, setSideBarReload,
             componentReload, setComponentReload,
             isDebug, setIsDebug,
-            setIsRunning, isRunning
+            setIsRunning, isRunning,
+            nodes, setNodes, onNodesChange,
+            edges, setEdges, onEdgesChange,
+            history, setHistory,
+            globalWs, setGlobalWs,
+            activeNode, setActiveNode
           }}
         >
           <Header />

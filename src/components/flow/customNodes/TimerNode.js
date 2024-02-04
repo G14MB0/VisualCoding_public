@@ -70,7 +70,7 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
                     />
                 </div>
                 <div className='w-[50%] drag_Handle'>
-                    <Dropdown elements={mu} onChange={setSelected} />
+                    <Dropdown elements={mu} onChange={setSelected} elementSelected={data.selected} />
                 </div>
             </div>
             <div className={`${isDebug ? "mt-4" : ""}`}>

@@ -119,91 +119,93 @@ export default function Setting() {
   }, []);
 
   return (
-    <div className="max-w-[1000px] mx-auto">
-      <div className="w-full px-5 mt-4 mb-4 border-y h-8 flex items-center justify-end">
-        <FolderCopyOutlined
-          className="font-sm text-gray-500 cursor-pointer mx-1"
-          fontSize="small"
-          titleAccess={"open log folder"}
-          onClick={(e) => {
-            e.preventDefault();
-            fetchApi(
-              "GET",
-              localServerUrl,
-              localServerPort,
-              `tkinter/openfolder/log`
-            );
-          }}
-        />
+    <div className="dark:bg-slate-900 w-full h-[105vh] pt-4">
+      <div className="max-w-[1000px] mx-auto ">
+        <div className="w-full px-5 mb-4 border-y h-8 flex items-center justify-end">
+          <FolderCopyOutlined
+            className="font-sm text-gray-500 cursor-pointer mx-1"
+            fontSize="small"
+            titleAccess={"open log folder"}
+            onClick={(e) => {
+              e.preventDefault();
+              fetchApi(
+                "GET",
+                localServerUrl,
+                localServerPort,
+                `tkinter/openfolder/log`
+              );
+            }}
+          />
 
-        <Settings
-          className="font-sm text-gray-500 cursor-pointer mx-1"
-          fontSize="small"
-          titleAccess={"open setting file folder"}
-          onClick={(e) => {
-            e.preventDefault();
-            fetchApi(
-              "GET",
-              localServerUrl,
-              localServerPort,
-              `tkinter/openfolder/config`
-            );
-          }}
-        />
-      </div>
-      <form
-        onSubmit={handleSubmit}
-        className="min-h-12 m-2 px-4 py-[9px] flex flex-col bg-white"
-      >
-        {Object.entries(settings).map(([key, value]) => (
-          <div className="grid grid-cols-2 w-full gap-4 my-1" key={key}>
-            <div className="flex items-center w-full font-mono">{key}</div>
-            <div
-              className="flex items-center w-full"
-              // title={
-              //   key === "EMAIL"
-              //     ? "Insert all the email separated by a comma (,)"
-              //     : ""
-              // }
-              title={titleArray[key] && titleArray[key]}
-            >
-              {key === "EMAIL" ? (
-                <textarea
-                  required
-                  value={changedSettings[key] ?? value}
-                  onChange={handleInputChange}
-                  id={key}
-                  name={key}
-                  className="block w-full resize-y rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
-                />
-              ) : (
-                <input
-                  required
-                  value={changedSettings[key] ?? value}
-                  onChange={handleInputChange}
-                  id={key}
-                  name={key}
-                  type="text"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
-                />
-              )}
+          <Settings
+            className="font-sm text-gray-500 cursor-pointer mx-1"
+            fontSize="small"
+            titleAccess={"open setting file folder"}
+            onClick={(e) => {
+              e.preventDefault();
+              fetchApi(
+                "GET",
+                localServerUrl,
+                localServerPort,
+                `tkinter/openfolder/config`
+              );
+            }}
+          />
+        </div>
+        <form
+          onSubmit={handleSubmit}
+          className="min-h-12 m-2 px-4 py-[9px] flex flex-col bg-white dark:bg-slate-900 rounded-lg"
+        >
+          {Object.entries(settings).map(([key, value]) => (
+            <div className="grid grid-cols-2 w-full gap-4 my-1" key={key}>
+              <div className="flex items-center w-full font-mono dark:text-white">{key}</div>
+              <div
+                className="flex items-center w-full"
+                // title={
+                //   key === "EMAIL"
+                //     ? "Insert all the email separated by a comma (,)"
+                //     : ""
+                // }
+                title={titleArray[key] && titleArray[key]}
+              >
+                {key === "EMAIL" ? (
+                  <textarea
+                    required
+                    value={changedSettings[key] ?? value}
+                    onChange={handleInputChange}
+                    id={key}
+                    name={key}
+                    className="dark:text-white dark:bg-slate-800 dark:ring-gray-700 block w-full resize-y rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
+                  />
+                ) : (
+                  <input
+                    required
+                    value={changedSettings[key] ?? value}
+                    onChange={handleInputChange}
+                    id={key}
+                    name={key}
+                    type="text"
+                    className="dark:text-white dark:bg-slate-800 dark:ring-gray-700 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
+                  />
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-        <hr class="mt-4 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50" />
+          ))}
+          <hr class="mt-4 h-0.5 border-t-0 bg-neutral-100 opacity-100 dark:opacity-50" />
 
-        <div className=" w-full flex justify-end">
-          <div className="w-36 mt-4 mr-4">
-            {/* <ButtonSecondary
+          <div className=" w-full flex justify-end">
+            <div className="w-36 mt-4 mr-4">
+              {/* <ButtonSecondary
               onClick={handleSendTemplate}
               children={"send email template"}
             /> */}
+            </div>
+            <div className="w-24 mt-4">
+              <ButtonMain children={"Update"} type="submit" />
+            </div>
           </div>
-          <div className="w-24 mt-4">
-            <ButtonMain children={"Update"} type="submit" />
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

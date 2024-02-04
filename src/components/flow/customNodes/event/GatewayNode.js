@@ -10,34 +10,35 @@ import Dropdown from '../../../UI/dropdown/Dropdown';
 export default memo(({ data, isConnectable, updateNodeData }) => {
 
     const { componentReload, localServerUrl, localServerPort, isDebug } = useContext(AppContext)
-    const [channelToSend, setChanneltoSend] = useState(data.channelToSend)
+    const [source, setSource] = useState(data.source)
+    const [target, setTarget] = useState(data.target)
     const [allChannel, setAllChannel] = useState([])
     // const [propagatedSignal, setPropagatedSignal] = useState(data.propagatedSignal)
     // Call updateNodeData whenever selected changes
     useEffect(() => {
         if (updateNodeData) {
-            updateNodeData(data.id, { ...data, channelToSend: channelToSend });
+            updateNodeData(data.id, { ...data, source: source, target: target });
         }
-    }, [updateNodeData, data.id, channelToSend]);
+    }, [updateNodeData, data.id, source, target]);
 
     useEffect(() => {
         fetchApi("GET", localServerUrl, localServerPort, "pythonbus/canchannel").then((response) =>
-            setAllChannel(response.map((element, key) => { return element.name })))
+            setAllChannel(Object.entries(response).map(([index, value], key) => { return value.name }))
+        )
     }, [, componentReload])
 
 
 
     return (
         <div className='nodeBase min-w-60'>
-            <Handle
+            {/* <Handle
                 type="target"
-                id="a"
                 position={Position.Left}
                 isConnectable={isConnectable}
-            />
+            /> */}
             <div className='flex justify-between items-center mb-2 drag_Handle'>
                 <div className='font-mono text-xs mb-2 drag_Handle'>
-                    SendMessage Message
+                    Message Forwarding(Gateway)
                 </div>
 
             </div>
@@ -59,7 +60,10 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
                     />
                 </div>*/}
                 <div className='w-full drag_Handle'>
-                    <Dropdown elements={allChannel} onChange={setChanneltoSend} elementSelected={data.channelToSend} />
+                    <Dropdown elements={allChannel} onChange={setSource} elementSelected={data.source} />
+                </div>
+                <div className='w-full drag_Handle pl-2'>
+                    <Dropdown elements={allChannel} onChange={setTarget} elementSelected={data.target} />
                 </div>
             </div>
             <div className={`${isDebug ? "mt-4" : ""}`}>
@@ -68,12 +72,6 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
                     :
                     ""}
             </div>
-            <Handle
-                type="source"
-                position={Position.Right}
-                id="a"
-                isConnectable={isConnectable}
-            />
         </ div>
     );
 });

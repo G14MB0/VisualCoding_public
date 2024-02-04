@@ -11,6 +11,7 @@ import EqualsNode from "./customNodes/operations/EqualsNode";
 import GlobalVarNode from "./customNodes/variables/GlobalVarNode";
 import OnMessageNode from "./customNodes/event/OnMessageNode";
 import SendMessageNode from "./customNodes/event/sendMessageNode";
+import GatewayNode from "./customNodes/event/GatewayNode";
 
 
 /* ************************************************* */
@@ -38,6 +39,7 @@ export const getNodeTypes = (updateNodeData) => ({
     GlobalVarNode: (nodeProps) => <GlobalVarNode updateNodeData={updateNodeData} {...nodeProps} />,
     OnMessageNode: (nodeProps) => <OnMessageNode updateNodeData={updateNodeData} {...nodeProps} />,
     SendMessageNode: (nodeProps) => <SendMessageNode updateNodeData={updateNodeData} {...nodeProps} />,
+    GatewayNode: (nodeProps) => <GatewayNode updateNodeData={updateNodeData} {...nodeProps} />,
 })
 
 export const getAdditionalData = (type) => {
@@ -65,6 +67,7 @@ export const availableNode = {
     GlobalVarNode: { name: "Global Var", category: "operation", icon: <PublicRounded /> },
     OnMessageNode: { name: "onMessage", category: "default", icon: <PublicRounded /> },
     SendMessageNode: { name: "sendMessage", category: "default", icon: <PublicRounded /> },
+    GatewayNode: { name: "Gateway", category: "default", icon: <PublicRounded /> },
 }
 
 
@@ -82,4 +85,5 @@ export const nodeStyles = {
     GlobalVarNode: { backgroundColor: '#5dc77a', borderRadius: "10px", transition: "background-color 0.3s", },
     OnMessageNode: { backgroundColor: '#5dc77a', borderRadius: "10px", transition: "background-color 0.3s", },
     SendMessageNode: { backgroundColor: '#5dc77a', borderRadius: "10px", transition: "background-color 0.3s", },
+    GatewayNode: { backgroundColor: '#5dc77a', borderRadius: "10px", transition: "background-color 0.3s", },
 }

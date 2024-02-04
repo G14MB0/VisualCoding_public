@@ -13,11 +13,14 @@ module.exports = {
       boxShadow: {
         custom: "0px 0px 10px 0px rgba(0, 0, 0, 0.2)",
         custom2: "0px 0px 6px -2px rgba(0, 0, 0, 0.4)",
+        custom2white: "0px 0px 6px -2px rgba(255, 255, 255, 0.4)",
+        customwhite: "1px 0px 10px -2px rgba(255, 255, 255, 0.4)",
       },
       animation: {
         pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         pulse2: "pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         pulse3: "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        spin1: "spin1 2s linear infinite"
       },
       colors: {
         // Light mode
@@ -30,13 +33,11 @@ module.exports = {
         warning: "#F2C811",
         error: "#D63737",
 
-        // dark: {
-        //   "background-dark": "#212121",
-        //   "primary-action-dark": "#4FC3F7",
-        //   "success-dark": "#81C784",
-        //   "warning-dark": "#FFB74D",
-        //   "error-dark": "#E57373",
-        // },
+        "dark": "#212121",
+        "primary-action-dark": "#4FC3F7",
+        "success-dark": "#81C784",
+        "warning-dark": "#FFB74D",
+        "error-dark": "#E57373",
       },
     },
   },

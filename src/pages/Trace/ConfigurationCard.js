@@ -95,7 +95,7 @@ export default function ConfigurationCard({ editing = false }) {
     ).then((response) => {
       console.log(response);
       setOverlay(false);
-      setReload(!reload);
+      setReload(true);
     });
   };
   ////////////////////////////////
@@ -131,30 +131,32 @@ export default function ConfigurationCard({ editing = false }) {
     <>
       <form
         onSubmit={handleSubmit}
-        className=" min-h-12 shadow-custom rounded-lg m-2 px-4 py-[9px] flex flex-col bg-white "
+        className=" min-h-12 shadow-custom rounded-lg m-2 px-4 py-[9px] flex flex-col bg-white  dark:bg-slate-800"
       >
         <div className="grid grid-cols-2 w-full gap-4 my-1">
-          <div className="flex items-center  w-full">Hardware</div>
+          <div className="flex items-center  w-full dark:text-white">Hardware</div>
           <div className="flex items-center w-full">
             <Dropdown
               elements={hardwares}
               onChange={handleHardwareChange}
               disabled={editing}
+              elementSelected={hardwares[0]}
             />
           </div>
         </div>
         <div className="grid grid-cols-2 w-full gap-4 my-1">
-          <div className="flex items-center  w-full">Hardware Channel</div>
+          <div className="flex items-center  w-full dark:text-white">Hardware Channel</div>
           <div className="flex items-center w-full">
             <Dropdown
               elements={channels}
               onChange={handleSelectedChannel}
               disabled={editing}
+              elementSelected={channels[0]}
             />
           </div>
         </div>
         <div className="grid grid-cols-2 w-full gap-4 my-1">
-          <div className="flex items-center  w-full">App Channel</div>
+          <div className="flex items-center  w-full dark:text-white">App Channel</div>
           <div className="flex items-center w-full">
             <div className="w-full">
               <input
@@ -166,13 +168,13 @@ export default function ConfigurationCard({ editing = false }) {
                 name="appChannel"
                 type="number"
                 min="1"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
+                className="dark:text-white dark:bg-slate-800 dark:ring-gray-700 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
               />
             </div>
           </div>
         </div>
         <div className="grid grid-cols-2 w-full gap-4 my-1">
-          <div className="flex items-center  w-full">Bitrate</div>
+          <div className="flex items-center  w-full dark:text-white dark:text-white">Bitrate</div>
           <div className="flex items-center w-full">
             <div className="w-full">
               <input
@@ -183,14 +185,14 @@ export default function ConfigurationCard({ editing = false }) {
                 id="canBitRate"
                 name="canBitRate"
                 type="number"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
+                className="dark:text-white dark:bg-slate-800 dark:ring-gray-700 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
               />
             </div>
-            <div className=" px-3 flex justify-center text-gray-500">kB</div>
+            <div className=" px-3 flex justify-center text-gray-500 dark:text-white">kB</div>
           </div>
         </div>
         <div className="grid grid-cols-2 w-full gap-4 my-1">
-          <div className="flex items-center  w-full">
+          <div className="flex items-center  w-full dark:text-white">
             FD{" "}
             <div className="ml-4">
               <Switch onChange={(event) => setIsFd(event.target.checked)} />
@@ -208,10 +210,10 @@ export default function ConfigurationCard({ editing = false }) {
                     name="fdBitRate"
                     type="number"
                     required
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
+                    className="dark:text-white dark:bg-slate-800 dark:ring-gray-700 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
                   />
                 </div>
-                <div className=" px-3 flex justify-center text-gray-500">
+                <div className=" px-3 flex justify-center text-gray-500 dark:text-white">
                   kB
                 </div>{" "}
               </>
@@ -221,7 +223,7 @@ export default function ConfigurationCard({ editing = false }) {
           </div>
         </div>
         <div className="grid grid-cols-2 w-full gap-4 my-1">
-          <div className="flex items-center  w-full">Channel Name</div>
+          <div className="flex items-center  w-full dark:text-white">Channel Name</div>
           <div className="flex items-center w-full">
             <div className="w-full">
               <input
@@ -232,13 +234,13 @@ export default function ConfigurationCard({ editing = false }) {
                 id="channelName"
                 name="channelName"
                 type="text"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
+                className="dark:text-white dark:bg-slate-800 dark:ring-gray-700 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
               />
             </div>
           </div>
         </div>
         <div className="grid grid-cols-2 w-full gap-4 my-1">
-          <div className="flex items-center  w-full">Database</div>
+          <div className="flex items-center  w-full dark:text-white">Database</div>
           {dbPath === "" ? (
             <div className="flex items-center w-full">
               <ButtonSecondary
@@ -264,7 +266,7 @@ export default function ConfigurationCard({ editing = false }) {
             </div>
           ) : (
             <div className="flex items-center justify-between">
-              <div className="text-sm text-gray-500 font-mono text-xs w-[50%] hover:overflow-visible overflow-hidden">
+              <div className="text-sm text-gray-500 font-mono text-xs w-[50%] hover:overflow-visible overflow-hidden dark:text-white">
                 {dbPath?.split("/").pop()}
               </div>
               <div
@@ -294,7 +296,7 @@ export default function ConfigurationCard({ editing = false }) {
           )}
         </div>
         <div className="grid grid-cols-2 w-full gap-4 my-1 items-center">
-          <div className="flex w-full flex-col">Propagation</div>
+          <div className="flex w-full flex-col dark:text-white">Propagation</div>
           <div className="grid grid-cols-3 gap-2">
             <div className="w-full col-span-3">
               <input
@@ -303,7 +305,7 @@ export default function ConfigurationCard({ editing = false }) {
                 id="msgId"
                 name="msgId"
                 type="numeric"
-                className="block w-full text-sm pl-6 flex justify-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                className="dark:text-white dark:bg-slate-800 dark:ring-gray-700 block w-full text-sm pl-6 flex justify-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
               />
             </div>
             {/* <div className="w-full col-span-2">

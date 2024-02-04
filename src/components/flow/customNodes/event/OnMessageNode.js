@@ -58,7 +58,7 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
                     />
                 </div>*/}
                 <div className='w-full drag_Handle'>
-                    <Dropdown elements={allPropagated} onChange={setPropagatedSignal} />
+                    <Dropdown elements={allPropagated} onChange={setPropagatedSignal} elementSelected={data.propagatedSignal} />
                 </div>
             </div>
             <div className={`${isDebug ? "mt-4" : ""}`}>

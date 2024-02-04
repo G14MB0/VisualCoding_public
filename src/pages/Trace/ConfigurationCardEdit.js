@@ -62,7 +62,7 @@ export default function ConfigurationCardEdit({
     ).then((response) => {
       console.log(response);
       setOverlay(false);
-      setReload(!reload);
+      setReload(true);
     });
   };
 

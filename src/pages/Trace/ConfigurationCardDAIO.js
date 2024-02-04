@@ -52,7 +52,7 @@ export default function ConfigurationCardDAIO() {
     ).then((response) => {
       console.log(response);
       setOverlay(false);
-      setReload(!reload);
+      setReload(true);
     });
   };
   ////////////////////////////////
@@ -75,16 +75,16 @@ export default function ConfigurationCardDAIO() {
     <>
       <form
         onSubmit={handleSubmit}
-        className=" min-h-12 shadow-custom rounded-lg m-2 px-4 py-[9px] flex flex-col bg-white "
+        className=" min-h-12 shadow-custom rounded-lg m-2 px-4 py-[9px] flex flex-col bg-white dark:bg-slate-800"
       >
         <div className="grid grid-cols-2 w-full gap-4 my-1">
-          <div className="flex items-center  w-full">Hardware</div>
+          <div className="flex items-center  w-full dark:text-white">Hardware</div>
           <div className="flex items-center w-full">
-            <Dropdown elements={hardwares} onChange={handleHardwareChange} />
+            <Dropdown elements={hardwares} onChange={handleHardwareChange} elementSelected={hardwares[0]} />
           </div>
         </div>
         <div className="grid grid-cols-2 w-full gap-4 my-1">
-          <div className="flex items-center  w-full">App Channel</div>
+          <div className="flex items-center  w-full dark:text-white">App Channel</div>
           <div className="flex items-center w-full">
             <div className="w-full">
               <input
@@ -95,13 +95,13 @@ export default function ConfigurationCardDAIO() {
                 name="appChannel"
                 type="number"
                 min="1"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
+                className="dark:text-white dark:bg-slate-800 dark:ring-gray-700 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
               />
             </div>
           </div>
         </div>
         <div className="grid grid-cols-2 w-full gap-4 my-1">
-          <div className="flex items-center  w-full">Sampling</div>
+          <div className="flex items-center  w-full dark:text-white">Sampling</div>
           <div className="flex items-center w-full">
             <div className="w-full">
               <input
@@ -112,10 +112,10 @@ export default function ConfigurationCardDAIO() {
                 id="sampling"
                 name="sampling"
                 type="number"
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
+                className="dark:text-white dark:bg-slate-800 dark:ring-gray-700 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
               />
             </div>
-            <div className=" px-3 flex justify-center text-gray-500">ms</div>
+            <div className=" px-3 flex justify-center text-gray-500 dark:text-white">ms</div>
           </div>
         </div>
 

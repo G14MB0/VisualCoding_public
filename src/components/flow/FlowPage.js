@@ -9,7 +9,7 @@ import SideBar from './SideBar';
 import fetchApi from '../../utils/request/requests';
 import { AppContext } from '../../provider/appProvider';
 import ComparatorNode from './customNodes/ComparatorNode';
-import { CachedRounded, PlayArrowRounded, Save, SaveSharp, SavingsRounded, StopRounded, UploadFile } from '@mui/icons-material';
+import { Brightness2Rounded, Brightness3Rounded, CachedRounded, PlayArrowRounded, RefreshRounded, Save, SaveSharp, SavingsRounded, StopRounded, UploadFile } from '@mui/icons-material';
 import { closeWs, openWs } from './utils';
 import DebugNode from './customNodes/DebugNode';
 import SumNode from './customNodes/operations/SumNode';
@@ -34,23 +34,20 @@ let id = 0;
 const getId = () => `node_${++id}`;
 
 export default function FlowPage() {
-    const { localServerUrl, localServerPort, save, setSave, fileUsed, setFileUsed, reload, setReload, setIsRunning, isRunning } =
+    const { localServerUrl, localServerPort, save, setSave, fileUsed, setFileUsed, reload, setReload, setIsRunning, isRunning, nodes, setNodes, onNodesChange,
+        edges, setEdges, onEdgesChange,
+        history, setHistory, globalWs, setGlobalWs, activeNode, setActiveNode } =
         useContext(AppContext);
 
 
     const reactFlowWrapper = useRef(null);
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-    const [ws, setWs] = useState(null);
-    const [activeNode, setActiveNode] = useState({});
+    // const [ws, setWs] = useState(null);
+    // const [activeNode, setActiveNode] = useState({});
 
     // const [selectedNodes, setSelectedNodes] = useState(new Set());
     // const [selectedEdges, setSelectedEdges] = useState(new Set());
-
-    // History state to keep track of past node and edge states
-    const [history, setHistory] = useState({ nodes: [], edges: [], currentIndex: -1 });
 
 
     /* ************************************************* */
@@ -142,7 +139,6 @@ export default function FlowPage() {
             nodes,
             edges
         };
-        console.log(data)
         try {
             const response = await fetchApi("POST",
                 localServerUrl,
@@ -188,69 +184,81 @@ export default function FlowPage() {
     /* ************************************************* */
     /*    UseEffects TO CALL FUNCTIONS BASED ON EVENT    */
     /* ************************************************* */
+
+    // Memoize the getHighestNodeId function to ensure it doesn't cause re-renders
+    const getHighestNodeId = useCallback((nodes) => {
+        return nodes.reduce((maxId, node) => {
+            const currentId = parseInt(node.id.replace('node_', ''), 10);
+            return currentId > maxId ? currentId : maxId;
+        }, 0);
+    }, []);
+
+
     // At each reload, get the node definition from backend and create the graph 
     useEffect(() => {
-        // Assuming IDs are in the format "node_X" where X is a numeric value
-        const getHighestNodeId = (nodes) => {
-            return nodes.reduce((maxId, node) => {
-                const currentId = parseInt(node.id.replace('node_', ''), 10);
-                return currentId > maxId ? currentId : maxId;
-            }, 0);
-        };
+        if (reload === true) {
+            console.log("Getting nodes from server", reload)
+            // Assuming IDs are in the format "node_X" where X is a numeric value
 
-        fetchApi("GET", localServerUrl, localServerPort, "nodes/nodes").then((response) => {
+            fetchApi("GET", localServerUrl, localServerPort, "nodes/nodes").then((response) => {
 
-            const highestNodeId = getHighestNodeId(response.nodes);
-            id = highestNodeId; // Update the id variable to start from the highest existing ID
-            // Add 'dragHandle' property to each node
-            const updatedNodes = response.nodes.map(node => ({
-                ...node,
-                dragHandle: '.drag_Handle'
-            }));
+                const highestNodeId = getHighestNodeId(response.nodes);
+                id = highestNodeId; // Update the id variable to start from the highest existing ID
+                // Add 'dragHandle' property to each node
+                const updatedNodes = response.nodes.map(node => ({
+                    ...node,
+                    dragHandle: '.drag_Handle'
+                }));
 
-            // Concatenate the updated nodes with the existing ones
-            setNodes((nds) => nds.concat(updatedNodes));
+                // Concatenate the updated nodes with the existing ones
+                setNodes((nds) => nds.concat(updatedNodes));
 
-            // Ensure each edge has a unique ID
-            const uniqueEdges = response.edges.map((edge, index) => {
-                // Assuming each edge does not already have a unique ID, assign one here
-                // If edges already have IDs but are not unique, you might need to generate new ones instead
-                return { ...edge, id: edge.id || `edge_${index}` };
+                // Ensure each edge has a unique ID
+                const uniqueEdges = response.edges.map((edge, index) => {
+                    // Assuming each edge does not already have a unique ID, assign one here
+                    // If edges already have IDs but are not unique, you might need to generate new ones instead
+                    return { ...edge, id: edge.id || `edge_${index}` };
+                });
+                setEdges(uniqueEdges);
+
             });
-            setEdges(uniqueEdges);
-        });
+        }
+        setReload(false)
     }, [reload])
 
 
     // At each node change, check if a significant change happen and update the graphHistory. used for ctrl+z
     useEffect(() => {
-        const newHistory = { ...history };
-        const lastNodes = history.nodes[history.currentIndex] || [];
-        const lastEdges = history.edges[history.currentIndex] || [];
+        if (!isRunning) {
+            const newHistory = { ...history };
+            const lastNodes = history.nodes[history.currentIndex] || [];
+            const lastEdges = history.edges[history.currentIndex] || [];
 
-        if (hasSignificantChange(nodes, edges, lastNodes, lastEdges)) {
-            handleSaveGraph();
-            if (fileUsed != "") fetchApi("POST", localServerUrl, localServerPort, "nodes/save", { filePath: fileUsed })
-        }
+            if (hasSignificantChange(nodes, edges, lastNodes, lastEdges)) {
+                handleSaveGraph();
+                if (fileUsed != "") fetchApi("POST", localServerUrl, localServerPort, "nodes/save", { filePath: fileUsed })
+            }
 
-        // Only update history if there's a significant change
-        if (history.currentIndex === -1 || hasSignificantChange(nodes, edges, lastNodes, lastEdges)) {
+            // Only update history if there's a significant change
+            if (history.currentIndex === -1 || hasSignificantChange(nodes, edges, lastNodes, lastEdges)) {
 
-            newHistory.nodes = [...newHistory.nodes.slice(0, newHistory.currentIndex + 1), nodes];
-            newHistory.edges = [...newHistory.edges.slice(0, newHistory.currentIndex + 1), edges];
-            newHistory.currentIndex += 1;
+                newHistory.nodes = [...newHistory.nodes.slice(0, newHistory.currentIndex + 1), nodes];
+                newHistory.edges = [...newHistory.edges.slice(0, newHistory.currentIndex + 1), edges];
+                newHistory.currentIndex += 1;
 
 
-            setHistory(newHistory);
+                setHistory(newHistory);
+            }
         }
     }, [nodes, edges]);
 
 
     // also save the graph if the nodes or edges array changes in length. also save to file
     useEffect(() => {
-        handleSaveGraph();
-        if (fileUsed != "") fetchApi("POST", localServerUrl, localServerPort, "nodes/save", { filePath: fileUsed })
-
+        if (!isRunning) {
+            handleSaveGraph();
+            if (fileUsed != "") fetchApi("POST", localServerUrl, localServerPort, "nodes/save", { filePath: fileUsed })
+        }
     }, [nodes.length, edges.length, save])
 
 
@@ -320,8 +328,8 @@ export default function FlowPage() {
     useEffect(() => {
         setNodes((nds) =>
             nds.map((node) => {
-                // Check if ws is null and set node style to default
-                if (ws === null) {
+                // Check if globalWs is null and set node style to default
+                if (globalWs === null) {
                     node.style = { ...node.style, boxShadow: "0px 0px" };
                 } else {
                     if (activeNode[node.id] && activeNode[node.id].hasOwnProperty('value')) {
@@ -347,14 +355,14 @@ export default function FlowPage() {
                 return node;
             })
         );
-    }, [activeNode, ws])
+    }, [activeNode, globalWs])
 
 
     // useEffect(() => {
     //     console.log(nodes);
     //     console.log(edges)
 
-    // }, [nodes.length, edges.length])
+    // }, [nodes, edges])
 
 
 
@@ -364,20 +372,32 @@ export default function FlowPage() {
         // 
         // <ReactFlowProvider>
         <div className="dndflow">
-            <div className='absolute top-13 right-0 z-10 px-2 flex justify-between items-center lg:w-[calc(100%-250px)] w-[calc(100%-150px)] bg-neutral-200 shadow-inner'>
+            <div className='absolute top-13 right-0 z-40 px-2 flex justify-between items-center lg:w-[calc(100%-250px)] w-[calc(100%-150px)] bg-neutral-200 shadow-inner dark:bg-slate-800'>
                 <div>
-                    <button className=''
-                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/run"); openWs(localServerUrl, localServerPort, setWs, setActiveNode, setIsRunning); setIsRunning(true) }}><PlayArrowRounded className='text-gray-700' /></button>
-                    <button className=''
-                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); closeWs(ws, setWs);; setIsRunning(false) }}><StopRounded className='text-gray-700' /></button>
+                    {!isRunning
+                        ?
+                        <button className=''
+                            onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/run"); openWs(localServerUrl, localServerPort, setGlobalWs, setActiveNode, setIsRunning); setIsRunning(true) }}>
+                            {!isRunning ?
+                                <PlayArrowRounded className='text-green-900' />
+                                :
+                                <RefreshRounded className='text-gray-700 animate-spin1' />
+                            }
+                        </button>
+                        :
+                        <button className=''
+                            onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); closeWs(globalWs, setGlobalWs);; setIsRunning(false) }}>
+                            <StopRounded className='text-red-900 animate-pulse3' />
+                        </button>
+                    }
                 </div>
                 <div className='w-12'>{ }</div>
 
                 <div>
                     <button className='ml-1'
-                        onClick={() => { fetchApi("POST", localServerUrl, localServerPort, "nodes/save", { filePath: fileUsed }).then((response) => { setSave(!save); setFileUsed(response.filePath); setReload(!reload) }) }}><SaveSharp className='text-gray-700' fontSize='small' /></button>
+                        onClick={() => { fetchApi("POST", localServerUrl, localServerPort, "nodes/save", { filePath: fileUsed }).then((response) => { setSave(!save); setFileUsed(response.filePath); setReload(!reload) }) }}><SaveSharp className='text-gray-700 dark:text-gray-300' fontSize='small' /></button>
                     <button className='ml-1'
-                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/load").then((response) => { setFileUsed(response.filePath); setNodes([]); setEdges([]); setReload(!reload) }) }}><UploadFile className='text-gray-700' fontSize='small' /></button>
+                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/load").then((response) => { setFileUsed(response.filePath); setNodes([]); setEdges([]); setReload(!reload) }) }}><UploadFile className='text-gray-700 dark:text-gray-300' fontSize='small' /></button>
 
                 </div>
             </div>
@@ -394,7 +414,7 @@ export default function FlowPage() {
                 onInit={setReactFlowInstance}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
-                style={{ background: "#fff" }}
+                style={{ background: "#0f172a" }}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
                 connectionLineStyle={connectionLineStyle}
@@ -408,7 +428,7 @@ export default function FlowPage() {
                 elementsSelectable={!isRunning}
                 paneMoveable={!isRunning}
             >
-                <Background variant={BackgroundVariant.Cross} gap={30} />
+                <Background variant={BackgroundVariant.Dots} gap={30} />
                 <MiniMap
                 // nodeStrokeColor={(n) => {
                 //     if (n.type === 'input') return '#0041d0';

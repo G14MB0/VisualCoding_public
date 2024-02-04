@@ -3,6 +3,9 @@ import { AppContext } from "../provider/appProvider";
 import CloseIcon from "@mui/icons-material/Close";
 import { Dialog } from "@headlessui/react";
 import { Switch } from "@mui/material";
+import fetchApi from "../utils/request/requests";
+import { closeWs, openWs } from "./flow/utils";
+import { PlayArrowRounded, RefreshRounded, StopRounded } from "@mui/icons-material";
 
 const navigation_array = [
   { name: "Home", href: "#" },
@@ -12,7 +15,7 @@ const navigation_array = [
 ];
 
 export default function Header() {
-  const { setOpenLogin, setOpenSignUp, setAppState, isLogged, setIsLogged, fileUsed, setIsDebug, appState } =
+  const { setOpenLogin, setOpenSignUp, setAppState, isLogged, setIsLogged, fileUsed, setIsDebug, appState, isRunning, localServerPort, localServerUrl, setActiveNode, setIsRunning, setGlobalWs, globalWs } =
     useContext(AppContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [navigation, setNavigation] = useState(navigation_array);
@@ -22,9 +25,9 @@ export default function Header() {
   // }, [isLogged]);
 
   return (
-    <header className="bg-background-light-alt relative w-[100%] h-10 z-10">
+    <header className="bg-background-light-alt dark:bg-slate-950 relative w-[100%] h-10 z-50">
       <nav
-        className="mx-auto flex max-w-9xl items-center justify-between gap-x-4 p-1 px-3"
+        className="mx-auto flex max-w-9xl items-center justify-between gap-x-4 p-0 px-3"
         aria-label="Global"
       >
         <div className="flex lg:flex"></div>
@@ -64,11 +67,29 @@ export default function Header() {
             {/* <Bars3Icon className="h-6 w-6" aria-hidden="true" /> */}
           </button>
         </div>
-        <div className="flex items-center font-mono text-xs">
+        <div className="flex items-center font-mono text-xs dark:text-white">
           Debug Mode{" "}
           <div className="ml-1">
-            <Switch onChange={(event) => setIsDebug(event.target.checked)} />
+            <Switch className="custom-switch" onChange={(event) => setIsDebug(event.target.checked)} />
           </div>
+        </div>
+        <div>
+          {!isRunning
+            ?
+            <button className=''
+              onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/run"); openWs(localServerUrl, localServerPort, setGlobalWs, setActiveNode, setIsRunning); setIsRunning(true) }}>
+              {!isRunning ?
+                <PlayArrowRounded className='text-green-900' fontSize="large" />
+                :
+                <RefreshRounded className='text-gray-700 animate-spin1' />
+              }
+            </button>
+            :
+            <button className=''
+              onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); closeWs(globalWs, setGlobalWs);; setIsRunning(false) }}>
+              <StopRounded className='text-red-700 animate-pulse3' fontSize="large" />
+            </button>
+          }
         </div>
         <div className="flex ">
           <button

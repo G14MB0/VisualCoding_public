@@ -34,7 +34,7 @@ export default function ConfigurationTableCan() {
       "pythonbus/deleteChannel",
       data
     ).then(() => {
-      setReload(!reload);
+      setReload(true);
     });
   };
 
@@ -45,41 +45,40 @@ export default function ConfigurationTableCan() {
       localServerPort,
       `pythonbus/canchannel`
     ).then((response) => {
-      console.log(response);
       setActiveHw(response);
     });
-  }, [reload]);
+  }, [, reload]);
 
   return (
     <>
-      <div className="text-[12px] text-gray-900 font-mono ml-4">
+      <div className="text-[12px] text-gray-900 font-mono ml-4 dark:text-white">
         Active CAN Channel
       </div>
-      <div className=" min-h-12 shadow-custom2 rounded-lg my-1 px-4 mx-4 py-[9px] flex flex-col bg-white overflow-auto scolamela">
+      <div className=" min-h-12 shadow-custom2 rounded-lg my-1 px-4 mx-4 py-[9px] flex flex-col bg-white overflow-auto scolamela dark:shadow-custom2white dark:bg-slate-900 hover:brightness-[1.2]">
         <table className="overflow-scroll">
-          <thead className="sticky top-0 bg-white">
+          <thead className="sticky top-0">
             <tr>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono dark:text-white"
               >
                 Name
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono dark:text-white"
               >
                 Hardware
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono dark:text-white"
               >
                 Channel
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono dark:text-white"
               >
                 App Channel
               </th>
@@ -88,15 +87,15 @@ export default function ConfigurationTableCan() {
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white max-h-[300px] overflow-auto">
+          <tbody className="max-h-[300px] overflow-auto">
             {activeHw &&
               activeHw.map((element, key) => (
                 <tr
                   key={key}
                   className={
                     key % 2 === 0
-                      ? "cursor-pointer hover:bg-indigo-100"
-                      : "bg-gray-100 cursor-pointer hover:bg-indigo-100"
+                      ? "cursor-pointer hover:bg-indigo-100 dark:hover:bg-slate-700"
+                      : "bg-gray-100 cursor-pointer hover:bg-indigo-100 rounded-sm dark:bg-slate-800 dark:hover:bg-slate-700"
                   }
                   onClick={(e) => {
                     if (!isRunning) {
@@ -120,24 +119,23 @@ export default function ConfigurationTableCan() {
                     }
                   }}
                 >
-                  <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 ">
+                  <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 dark:text-white">
                     {element["name"]}
                   </td>
-                  <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 ">
+                  <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 dark:text-white">
                     {element["serial_number"]}
                   </td>
-                  <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 ">
+                  <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 dark:text-white">
                     {element["hw_channel"] + 1}
                   </td>
-                  <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 ">
+                  <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 dark:text-white">
                     {element["ch_num"] + 1}
                   </td>
                   <td
-                    className={`whitespace-nowrap py-2 px-3 text-sm  w-4 h-4  ${
-                      isRunning
-                        ? "cursor-not-allowed text-gray-300"
-                        : "text-gray-900 cursor-pointer"
-                    }`}
+                    className={`whitespace-nowrap py-2 px-3 text-sm  w-4 h-4  ${isRunning
+                      ? "cursor-not-allowed text-gray-300"
+                      : "text-gray-900 cursor-pointer"
+                      }`}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleRemoveChannel(element);
@@ -151,16 +149,15 @@ export default function ConfigurationTableCan() {
                 </tr>
               ))}
             <tr>
-              <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 "></td>
-              <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 "></td>
-              <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 "></td>
-              <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 "></td>
+              <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 dark:text-white"></td>
+              <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 dark:text-white"></td>
+              <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 dark:text-white"></td>
+              <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 dark:text-white"></td>
               <td
-                className={`whitespace-nowrap py-2 px-3 text-sm  w-4 h-4  ${
-                  isRunning
-                    ? "cursor-not-allowed text-gray-300"
-                    : "text-gray-900 cursor-pointer"
-                }`}
+                className={`whitespace-nowrap py-2 px-3 text-sm  w-4 h-4  ${isRunning
+                  ? "cursor-not-allowed text-gray-300"
+                  : "text-gray-900 cursor-pointer"
+                  }`}
                 onClick={(e) => {
                   if (!isRunning) {
                     setOverlay(true);

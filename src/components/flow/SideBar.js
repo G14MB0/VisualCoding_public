@@ -40,7 +40,7 @@ export default () => {
     const deleteNode = (nodeName) => {
         setOverlay(false)
         const data = { name: nodeName }
-        fetchApi("POST", localServerUrl, localServerPort, "functions/delete", data).then(() => { setReload(!reload); setSideBarReload(!sideBarReload) })
+        fetchApi("POST", localServerUrl, localServerPort, "functions/delete", data).then(() => { setReload(true); setSideBarReload(!sideBarReload) })
     }
 
     useEffect(() => {
@@ -51,8 +51,8 @@ export default () => {
 
 
     return (
-        <aside>
-            <div className="w-full px-2 py-1 font-semibold ">Default Nodes</div>
+        <aside className='dark:bg-slate-900 shadow-customwhite z-10'>
+            <div className="w-full px-2 py-1 font-semibold dark:text-white">Default Nodes</div>
             <div className='flex flex-wrap'>
                 {Object.entries(availableNode).filter(([, value]) => value.category === "default").map(([element, value], key) => (
                     <div key={key}
@@ -64,7 +64,7 @@ export default () => {
                     </div>
                 ))}
             </div>
-            <div className="w-full px-2 py-1 font-semibold  mt-4">Operation</div>
+            <div className="w-full px-2 py-1 font-semibold  mt-4 dark:text-white">Operation</div>
             <div className='flex flex-wrap'>
                 {Object.entries(availableNode).filter(([, value]) => value.category === "operation").map(([element, value], key) => (
                     <div key={key}
@@ -76,7 +76,7 @@ export default () => {
                     </div>
                 ))}
             </div>
-            <div className="w-full px-2 py-1 font-semibold  mt-4">Custom Nodes</div>
+            <div className="w-full px-2 py-1 font-semibold  mt-4 dark:text-white">Custom Nodes</div>
             <div className='flex flex-wrap'>
                 {customNodes?.map((item, key) => (
                     <div

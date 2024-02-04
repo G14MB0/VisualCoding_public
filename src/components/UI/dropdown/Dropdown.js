@@ -43,7 +43,7 @@ export default function Dropdown({
 					{/* <Listbox.Label className="block text-sm font-medium leading-6 text-gray-900">Search By</Listbox.Label> */}
 					<div className="relative my-auto">
 						<Listbox.Button
-							className={`relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6 ${disabled ? "cursor-not-allowed text-gray-500" : ""
+							className={`relative w-full cursor-default rounded-md bg-white dark:bg-slate-800 py-1.5 pl-3 pr-10 text-left text-gray-900 dark:text-white shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6 ${disabled ? "cursor-not-allowed text-gray-500" : ""
 								}`}
 							disabled={disabled}
 						>
@@ -66,7 +66,7 @@ export default function Dropdown({
 							leaveFrom="opacity-100"
 							leaveTo="opacity-0"
 						>
-							<Listbox.Options className="absolute z-[100000] mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+							<Listbox.Options className="absolute z-[100000] mt-1 max-h-56 w-full overflow-auto rounded-md dark:bg-slate-800  bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
 								{elements &&
 									elements.map((element) => (
 										<Listbox.Option
@@ -74,7 +74,7 @@ export default function Dropdown({
 											className={({ active }) =>
 												classNames(
 													active ? "bg-indigo-600 text-white" : "text-gray-900",
-													"relative cursor-default select-none py-2 pl-3 pr-9"
+													"relative cursor-default select-none py-2 pl-3 pr-9 dark:text-white"
 												)
 											}
 											value={element}

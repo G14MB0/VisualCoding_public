@@ -80,10 +80,8 @@ body {
 }
 
 .dndflow aside {
-    border-right: 1px solid #eee;
     padding: 15px 10px;
     font-size: 12px;
-    background: #fcfcfc;
 }
 
 .dndflow aside .description {
@@ -202,4 +200,17 @@ body {
 
 .scolatela::-webkit-scrollbar-thumb:hover {
     background-color: rgb(151, 151, 151);
+}
+
+
+
+@keyframes spin1 {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* In your global.css file */
+.dark .custom-switch .MuiSwitch-track {
+    background-color: white;
 }

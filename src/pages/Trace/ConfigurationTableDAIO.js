@@ -27,59 +27,62 @@ export default function ConfigurationTableDAIO() {
       localServerPort,
       "pythonbus/daio/stop"
     ).then(() => {
-      setReload(!reload);
+      setReload(true);
     });
   };
 
   useEffect(() => {
-    fetchApi("GET", localServerUrl, localServerPort, `pythonbus/daiochannel`)
-      .then((response) => {
-        setActiveHw(response);
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-        // Handle the error further (e.g., show an error message to the user)
-      });
+    if (reload) {
+      fetchApi("GET", localServerUrl, localServerPort, `pythonbus/daiochannel`)
+        .then((response) => {
+          setActiveHw(response);
+        })
+        .catch((error) => {
+          console.error("There was a problem with the fetch operation:", error);
+          // Handle the error further (e.g., show an error message to the user)
+        });
+    }
+    setReload(false)
   }, [reload]);
 
   return (
     <>
-      <div className="text-[12px] text-gray-900 font-mono ml-4">
+      <div className="text-[12px] text-gray-900 font-mono ml-4 dark:text-white">
         Active DAIO Channel
       </div>
-      <div className=" min-h-12 shadow-custom2 rounded-lg my-1 px-4 mx-4 py-[9px] flex flex-col bg-white overflow-auto scolamela">
+      <div className=" min-h-12 shadow-custom2 rounded-lg my-1 px-4 mx-4 py-[9px] flex flex-col bg-white overflow-auto scolamela dark:bg-slate-900 hover:brightness-[1.2] dark:shadow-custom2white">
         <table className="overflow-scroll">
-          <thead className="sticky top-0 bg-white">
+          <thead className="sticky top-0 ">
             <tr>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono dark:text-white"
               >
                 Hardware
               </th>
 
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono dark:text-white"
               >
                 App Channel
               </th>
               <th
                 scope="col"
-                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono"
+                className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 font-mono dark:text-white"
               >
                 Sampling [ms]
               </th>
 
               <th scope="col" className="relative py-3.5 pl-3 pr-4 ">
-                <span className="sr-only">Edit</span>
+                <span className="sr-only dark:text-white">Edit</span>
               </th>
             </tr>
           </thead>
-          <tbody className="bg-white max-h-[300px] overflow-auto">
+          <tbody className=" max-h-[300px] overflow-auto">
             {activeHw.length > 0 ? (
               activeHw.map((element, key) => (
-                <tr key={key} className={key % 2 === 0 ? "" : "bg-gray-100"}>
+                <tr key={key} className={key % 2 === 0 ? "dark:hover:bg-slate-700" : "bg-gray-100 dark:hover:bg-slate-700"}>
                   <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 ">
                     {element["serial_number"]}
                   </td>
@@ -91,8 +94,8 @@ export default function ConfigurationTableDAIO() {
                   </td>
                   <td
                     className={`whitespace-nowrap py-2 px-3 text-sm  w-4 h-4  ${isRunning
-                        ? "cursor-not-allowed text-gray-300"
-                        : "text-gray-900 cursor-pointer"
+                      ? "cursor-not-allowed text-gray-300"
+                      : "text-gray-900 cursor-pointer"
                       }`}
                     onClick={() => {
                       if (!isRunning) {
@@ -115,8 +118,8 @@ export default function ConfigurationTableDAIO() {
                 <td className="whitespace-nowrap py-2 px-3 text-sm text-gray-900 "></td>
                 <td
                   className={`whitespace-nowrap py-2 px-3 text-sm  w-4 h-4  ${isRunning
-                      ? "cursor-not-allowed text-gray-300"
-                      : "text-gray-900 cursor-pointer"
+                    ? "cursor-not-allowed text-gray-300"
+                    : "text-gray-900 cursor-pointer "
                     }`}
                   onClick={(e) => {
                     if (!isRunning) {
