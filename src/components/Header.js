@@ -4,8 +4,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Dialog } from "@headlessui/react";
 import { Switch } from "@mui/material";
 import fetchApi from "../utils/request/requests";
-import { closeWs, openWs } from "./flow/utils";
+import { closeWs, openWs, startAllLog, startCanLog, stopAllLog } from "./flow/utils";
 import { PlayArrowRounded, RefreshRounded, StopRounded } from "@mui/icons-material";
+import Switcher from "./UI/Switcher";
 
 const navigation_array = [
   { name: "Home", href: "#" },
@@ -15,7 +16,7 @@ const navigation_array = [
 ];
 
 export default function Header() {
-  const { setOpenLogin, setOpenSignUp, setAppState, isLogged, setIsLogged, fileUsed, setIsDebug, appState, isRunning, localServerPort, localServerUrl, setActiveNode, setIsRunning, setGlobalWs, globalWs } =
+  const { setOpenLogin, setOpenSignUp, setAppState, isLogged, setIsLogged, fileUsed, setIsDebug, appState, isRunning, localServerPort, localServerUrl, setActiveNode, setIsRunning, setGlobalWs, globalWs, isLogging, isDaioLogging } =
     useContext(AppContext);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [navigation, setNavigation] = useState(navigation_array);
@@ -53,7 +54,7 @@ export default function Header() {
         <div className="font-mono">{fileUsed?.split(/[/\\]/).pop()}</div>
         <div className="flex-1 lg:flex-1 h-8 w-auto drag" />
 
-        <div className="flex flex items-center justify-end gap-x-6">
+        <div className="flex items-center justify-end gap-x-6">
 
         </div>
 
@@ -73,11 +74,25 @@ export default function Header() {
             <Switch className="custom-switch" onChange={(event) => setIsDebug(event.target.checked)} />
           </div>
         </div>
+        <div className="flex items-center justify-center">
+          <Switcher />
+        </div>
         <div>
           {!isRunning
             ?
             <button className=''
-              onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/run"); openWs(localServerUrl, localServerPort, setGlobalWs, setActiveNode, setIsRunning); setIsRunning(true) }}>
+              onClick={() => {
+                fetchApi("GET", localServerUrl, localServerPort, "nodes/run");
+                if (isLogging) {
+                  if (isDaioLogging) {
+                    startAllLog(localServerUrl, localServerPort);
+                  } else {
+                    startCanLog(localServerUrl, localServerPort);
+                  }
+                }
+                openWs(localServerUrl, localServerPort, setGlobalWs, setActiveNode, setIsRunning);
+                setIsRunning(true)
+              }}>
               {!isRunning ?
                 <PlayArrowRounded className='text-green-900' fontSize="large" />
                 :
@@ -86,7 +101,7 @@ export default function Header() {
             </button>
             :
             <button className=''
-              onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); closeWs(globalWs, setGlobalWs);; setIsRunning(false) }}>
+              onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); stopAllLog(localServerUrl, localServerPort); closeWs(globalWs, setGlobalWs);; setIsRunning(false) }}>
               <StopRounded className='text-red-700 animate-pulse3' fontSize="large" />
             </button>
           }

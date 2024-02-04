@@ -45,6 +45,8 @@ export default function AppProvider() {
 
   const [isDebug, setIsDebug] = useState(false)
   const [isRunning, setIsRunning] = useState(false);
+  const [isLogging, setIsLogging] = useState(false);
+  const [isDaioLogging, setIsDaioLogging] = useState(false);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
@@ -54,10 +56,13 @@ export default function AppProvider() {
   const [globalWs, setGlobalWs] = useState(null);
   const [activeNode, setActiveNode] = useState({});
 
-  useEffect(() => {
-    console.log(reload)
 
-  }, [reload])
+  const [isDark, setIsDark] = useState({});
+
+  useEffect(() => {
+    console.log(isLogging, isDaioLogging)
+
+  }, [isLogging, isDaioLogging])
 
 
   //sono tutte le mie 'pagine'
@@ -103,7 +108,10 @@ export default function AppProvider() {
             edges, setEdges, onEdgesChange,
             history, setHistory,
             globalWs, setGlobalWs,
-            activeNode, setActiveNode
+            activeNode, setActiveNode,
+            isDark, setIsDark,
+            isLogging, setIsLogging,
+            isDaioLogging, setIsDaioLogging
           }}
         >
           <Header />

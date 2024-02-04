@@ -1,27 +1,71 @@
-import React, { useState, useEffect, useCallback, useRef, useContext, useMemo } from 'react';
-import ReactFlow, { useNodesState, useEdgesState, addEdge, MiniMap, Controls, ReactFlowProvider, SmoothStepEdge, useStoreApi, Background, BackgroundVariant, useOnSelectionChange } from 'reactflow';
+import React, { useState, useEffect, useCallback, useRef, useContext, useMemo, useLayoutEffect } from 'react';
+import ReactFlow, { addEdge, MiniMap, Controls, useStoreApi, Background, BackgroundVariant, useReactFlow, Panel } from 'reactflow';
 
 
 import 'reactflow/dist/style.css';
-import TimerNode from './customNodes/TimerNode';
-import FunctionNode from './customNodes/FunctionNode';
 import SideBar from './SideBar';
 import fetchApi from '../../utils/request/requests';
 import { AppContext } from '../../provider/appProvider';
-import ComparatorNode from './customNodes/ComparatorNode';
-import { Brightness2Rounded, Brightness3Rounded, CachedRounded, PlayArrowRounded, RefreshRounded, Save, SaveSharp, SavingsRounded, StopRounded, UploadFile } from '@mui/icons-material';
-import { closeWs, openWs } from './utils';
-import DebugNode from './customNodes/DebugNode';
-import SumNode from './customNodes/operations/SumNode';
+import { PlayArrowRounded, RefreshRounded, SaveSharp, StopRounded, UploadFile } from '@mui/icons-material';
+import { closeWs, openWs, startAllLog, startCanLog, stopAllLog } from './utils';
 import { getNodeTypes, getAdditionalData } from './nodeDefinition';
 import SimpleFloatingEdge from './customNodes/SimpleFloatingEdge';
+import ELK from 'elkjs/lib/elk.bundled';
+import ButtonMain from '../UI/buttons/ButtonMain';
 
+
+// Create an instance of ELK
+const elk = new ELK();
+const elkOptions = {
+    'elk.algorithm': 'layered',
+    'elk.layered.spacing.nodeNodeBetweenLayers': '250',
+    'elk.spacing.nodeNode': '280',
+    'elk.direction': 'RIGHT'
+};
+
+const getLayoutedElements = (nodes, edges, options = {}) => {
+    const isHorizontal = true
+    const graph = {
+        id: 'root',
+        layoutOptions: options,
+        children: nodes.map((node) => ({
+            ...node,
+            // Adjust the target and source handle positions based on the layout
+            // direction.
+            targetPosition: isHorizontal ? 'left' : 'top',
+            sourcePosition: isHorizontal ? 'right' : 'bottom',
+
+            // Hardcode a width and height for elk to use when layouting.
+            width: 250,
+            height: 150,
+        })),
+        edges: edges,
+    };
+
+    return elk
+        .layout(graph)
+        .then((layoutedGraph) => ({
+            nodes: layoutedGraph.children.map((node) => ({
+                ...node,
+                // React Flow expects a position property on the node instead of `x`
+                // and `y` fields.
+                position: { x: node.x, y: node.y },
+            })),
+
+            edges: layoutedGraph.edges,
+        }))
+        .catch(console.error);
+};
 
 
 const connectionLineStyle = { stroke: '#333333', type: "smootstep" };
 const snapGrid = [10, 10];
 
-const MIN_DISTANCE = 850;
+const flowStyles = { width: '100%', height: '500px' };
+const nodeExtent = [500, 150]; // [width, height] of nodes
+const edgeExtent = [150, 75]; // [width, height] of edges
+
+// const MIN_DISTANCE = 850;
 
 const edgeTypes = {
     floating: SimpleFloatingEdge,
@@ -35,13 +79,14 @@ const getId = () => `node_${++id}`;
 
 export default function FlowPage() {
     const { localServerUrl, localServerPort, save, setSave, fileUsed, setFileUsed, reload, setReload, setIsRunning, isRunning, nodes, setNodes, onNodesChange,
-        edges, setEdges, onEdgesChange,
-        history, setHistory, globalWs, setGlobalWs, activeNode, setActiveNode } =
+        edges, setEdges, onEdgesChange, isDark,
+        history, setHistory, globalWs, setGlobalWs, activeNode, setActiveNode, isLogging, isDaioLogging } =
         useContext(AppContext);
 
 
     const reactFlowWrapper = useRef(null);
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
+    const { fitView } = useReactFlow();
 
     // const [ws, setWs] = useState(null);
     // const [activeNode, setActiveNode] = useState({});
@@ -127,6 +172,22 @@ export default function FlowPage() {
             setNodes((nds) => nds.concat(newNode));
         },
         [reactFlowInstance],
+    );
+
+    const onLayout = useCallback(
+        ({ direction, useInitialNodes = false }) => {
+            const opts = { 'elk.direction': direction, ...elkOptions };
+            const ns = useInitialNodes ? initialNodes : nodes;
+            const es = useInitialNodes ? initialEdges : edges;
+
+            getLayoutedElements(ns, es, opts).then(({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+                setNodes(layoutedNodes);
+                setEdges(layoutedEdges);
+
+                window.requestAnimationFrame(() => fitView());
+            });
+        },
+        [nodes, edges]
     );
 
 
@@ -357,12 +418,10 @@ export default function FlowPage() {
         );
     }, [activeNode, globalWs])
 
-
-    // useEffect(() => {
-    //     console.log(nodes);
-    //     console.log(edges)
-
-    // }, [nodes, edges])
+    // Calculate the initial layout on mount.
+    useLayoutEffect(() => {
+        onLayout({ direction: 'RIGHT', useInitialNodes: false });
+    }, []);
 
 
 
@@ -372,12 +431,23 @@ export default function FlowPage() {
         // 
         // <ReactFlowProvider>
         <div className="dndflow">
-            <div className='absolute top-13 right-0 z-40 px-2 flex justify-between items-center lg:w-[calc(100%-250px)] w-[calc(100%-150px)] bg-neutral-200 shadow-inner dark:bg-slate-800'>
+            <div className='absolute bg-slate-100 top-13 right-0 z-40 px-2 flex justify-between items-center lg:w-[calc(100%-250px)] w-[calc(100%-150px)]  shadow-inner dark:bg-slate-800'>
                 <div>
                     {!isRunning
                         ?
                         <button className=''
-                            onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/run"); openWs(localServerUrl, localServerPort, setGlobalWs, setActiveNode, setIsRunning); setIsRunning(true) }}>
+                            onClick={() => {
+                                fetchApi("GET", localServerUrl, localServerPort, "nodes/run");
+                                if (isLogging) {
+                                    if (isDaioLogging) {
+                                        startAllLog(localServerUrl, localServerPort);
+                                    } else {
+                                        startCanLog(localServerUrl, localServerPort);
+                                    }
+                                }
+                                openWs(localServerUrl, localServerPort, setGlobalWs, setActiveNode, setIsRunning);
+                                setIsRunning(true)
+                            }}>
                             {!isRunning ?
                                 <PlayArrowRounded className='text-green-900' />
                                 :
@@ -386,7 +456,7 @@ export default function FlowPage() {
                         </button>
                         :
                         <button className=''
-                            onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); closeWs(globalWs, setGlobalWs);; setIsRunning(false) }}>
+                            onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); stopAllLog(localServerUrl, localServerPort); closeWs(globalWs, setGlobalWs);; setIsRunning(false) }}>
                             <StopRounded className='text-red-900 animate-pulse3' />
                         </button>
                     }
@@ -414,7 +484,7 @@ export default function FlowPage() {
                 onInit={setReactFlowInstance}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
-                style={{ background: "#0f172a" }}
+                style={{ background: `${isDark ? "#0f172a" : "#f5f7fa"}` }}
                 nodeTypes={nodeTypes}
                 edgeTypes={edgeTypes}
                 connectionLineStyle={connectionLineStyle}
@@ -428,15 +498,21 @@ export default function FlowPage() {
                 elementsSelectable={!isRunning}
                 paneMoveable={!isRunning}
             >
-                <Background variant={BackgroundVariant.Dots} gap={30} />
+                <Panel position="bottom-center">
+                    <div className='w-24'>
+                        <ButtonMain onClick={() => onLayout({ direction: 'RIGHT' })} children={"Auto-Layout"} /></div>
+                </Panel>
+                <Background variant={`${isDark ? BackgroundVariant.Dots : BackgroundVariant.Cross}`} gap={30} color={`${isDark ? "#80889e" : "#dedfe0"}`} />
                 <MiniMap
-                // nodeStrokeColor={(n) => {
-                //     if (n.type === 'input') return '#0041d0';
-                //     if (n.type === 'output') return '#ff0072';
-                // }}
-                // nodeColor={(n) => {
-                //     return '#fff';
-                // }}
+                    // nodeStrokeColor={(n) => {
+                    //     if (n.type === 'input') return '#0041d0';
+                    //     if (n.type === 'output') return '#ff0072';
+                    // }}
+                    // nodeColor={(n) => {
+                    //     return '#fff';
+                    // }}
+                    nodeColor={`${isDark ? "#80889e" : "#dedfe0"}`}
+                    maskColor={`${isDark ? "#80889e" : "#dedfe0"}`}
                 />
                 <Controls />
             </ReactFlow>

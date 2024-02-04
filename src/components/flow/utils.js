@@ -1,4 +1,5 @@
 import { Position, internalsSymbol } from 'reactflow';
+import fetchApi from '../../utils/request/requests';
 
 export function openWs(localServerUrl, localServerPort, setWs, setMessage, setIsRunning) {
     // Initialize the WebSocket connection
@@ -121,3 +122,18 @@ export function getEdgeParams(source, target) {
         targetPos,
     };
 }
+
+export const startAllLog = (localServerUrl, localServerPort) => {
+    fetchApi("GET", localServerUrl, localServerPort, `pythonbus/all/startlog`);
+    fetchApi("GET", localServerUrl, localServerPort, `pythonbus/daio/startlog`);
+};
+
+export const startCanLog = (localServerUrl, localServerPort,) => {
+    fetchApi("GET", localServerUrl, localServerPort, `pythonbus/all/startlog`);
+};
+
+
+export const stopAllLog = (localServerUrl, localServerPort,) => {
+    fetchApi("GET", localServerUrl, localServerPort, `pythonbus/all/stoplog`);
+    fetchApi("GET", localServerUrl, localServerPort, `pythonbus/daio/stoplog`);
+};

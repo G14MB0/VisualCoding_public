@@ -12,6 +12,9 @@ import GlobalVarNode from "./customNodes/variables/GlobalVarNode";
 import OnMessageNode from "./customNodes/event/OnMessageNode";
 import SendMessageNode from "./customNodes/event/sendMessageNode";
 import GatewayNode from "./customNodes/event/GatewayNode";
+import VariableNode from "./customNodes/variables/VariableNode";
+import SignalNode from "./customNodes/variables/SignalNode";
+import DemuxerNode from "./customNodes/operations/DemuxerNode";
 
 
 /* ************************************************* */
@@ -40,6 +43,9 @@ export const getNodeTypes = (updateNodeData) => ({
     OnMessageNode: (nodeProps) => <OnMessageNode updateNodeData={updateNodeData} {...nodeProps} />,
     SendMessageNode: (nodeProps) => <SendMessageNode updateNodeData={updateNodeData} {...nodeProps} />,
     GatewayNode: (nodeProps) => <GatewayNode updateNodeData={updateNodeData} {...nodeProps} />,
+    VariableNode: (nodeProps) => <VariableNode updateNodeData={updateNodeData} {...nodeProps} />,
+    SignalNode: (nodeProps) => <SignalNode updateNodeData={updateNodeData} {...nodeProps} />,
+    DemuxerNode: (nodeProps) => <DemuxerNode updateNodeData={updateNodeData} {...nodeProps} />,
 })
 
 export const getAdditionalData = (type) => {
@@ -50,6 +56,9 @@ export const getAdditionalData = (type) => {
         SubtractNode: { operation: 'subtract' },
         EqualsNode: { operation: 'equals', logic: '=' },
         GlobalVarNode: { type: 'FunctionNode', isPolling: 'true' },
+        VariableNode: { type: 'FunctionNode', isPolling: 'false' },
+        SignalNode: { type: 'FunctionNode', isPolling: 'true' },
+        DemuxerNode: { type: 'FunctionNode', isPolling: 'false' },
     }
     return operationNodeType[type]
 }
@@ -68,6 +77,9 @@ export const availableNode = {
     OnMessageNode: { name: "onMessage", category: "default", icon: <PublicRounded /> },
     SendMessageNode: { name: "sendMessage", category: "default", icon: <PublicRounded /> },
     GatewayNode: { name: "Gateway", category: "default", icon: <PublicRounded /> },
+    VariableNode: { name: "Variable", category: "operation", icon: <div className="font-bold font-mono">1</div> },
+    SignalNode: { name: "Signal", category: "operation", icon: <div className="font-bold font-mono">~</div> },
+    DemuxerNode: { name: "Demuxer", category: "operation", icon: <div className="font-bold font-mono">{"<"}</div> },
 }
 
 
@@ -86,4 +98,7 @@ export const nodeStyles = {
     OnMessageNode: { backgroundColor: '#5dc77a', borderRadius: "10px", transition: "background-color 0.3s", },
     SendMessageNode: { backgroundColor: '#5dc77a', borderRadius: "10px", transition: "background-color 0.3s", },
     GatewayNode: { backgroundColor: '#5dc77a', borderRadius: "10px", transition: "background-color 0.3s", },
+    VariableNode: { backgroundColor: '#5dc77a', borderRadius: "10px", transition: "background-color 0.3s", },
+    SignalNode: { backgroundColor: '#5dc77a', borderRadius: "10px", transition: "background-color 0.3s", },
+    DemuxerNode: { backgroundColor: '#5dc77a', borderRadius: "10px", transition: "background-color 0.3s", },
 }

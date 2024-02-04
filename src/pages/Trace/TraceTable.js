@@ -153,7 +153,7 @@ export default function TraceTable() {
         <>
           <div className="grid grid-cols-6 pb-2 ml-1">
             <input
-              className="col-span-3 relative h-[36px] my-auto rounded-md bg-white py-1.5 pl-3 mr-2 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 "
+              className="dark:text-gray-300 dark:bg-slate-800 dark:ring-gray-700 col-span-3 relative h-[36px] my-auto rounded-md bg-white py-1.5 pl-3 mr-2 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 "
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -172,7 +172,7 @@ export default function TraceTable() {
       <div className={`grid grid-cols-${tableHeader.length}`}>
         {messages && tableHeader.map((value, key) => (
           <>
-            <div className="font-mono pl-1">{value}</div>
+            <div className="font-mono pl-1 dark:text-gray-300">{value}</div>
             {/* <div className="font-mono">msg ID</div> */}
             {/* <div className="font-mono">msg Value [hex]</div> */}
           </>
@@ -210,20 +210,20 @@ export default function TraceTable() {
                     className={`py-1 ${open === entryIndex &&
                       typeof msg[1] === "object" &&
                       msg[1] !== null
-                      ? "bg-indigo-200" // Open accordion header color
+                      ? "bg-indigo-200 dark:bg-slate-700" // Open accordion header color
                       : entryIndex % 2 === 0
-                        ? "bg-indigo-50" // Even accordion header color
-                        : "bg-indigo-100" // Odd accordion header color
+                        ? "bg-indigo-50 dark:bg-slate-800" // Even accordion header color
+                        : "bg-indigo-100 dark:bg-slate-900" // Odd accordion header color
                       }`}
                   >
                     <>
-                      <div className="whitespace-nowrap  px-3 text-xs font-mono font-light text-gray-900 w-1/3">
+                      <div className="whitespace-nowrap  px-3 text-xs font-mono font-light text-gray-900 w-1/3 dark:text-gray-300">
                         {canBus}
                       </div>
-                      <div className="whitespace-nowrap px-3 text-xs font-mono font-light text-gray-900 w-1/3">
+                      <div className="whitespace-nowrap px-3 text-xs font-mono font-light text-gray-900 w-1/3 dark:text-gray-300">
                         {msg[0]}
                       </div>
-                      <div className="whitespace-nowrap px-3 text-xs font-mono font-light text-gray-900 w-1/3">
+                      <div className="whitespace-nowrap px-3 text-xs font-mono font-light text-gray-900 w-1/3 dark:text-gray-300">
                         {msg[1] &&
                           (typeof msg[1] === "object" && msg[1] !== null && msg[1]["__debugData"]
                             ? JSON.stringify(msg[1]["__debugData"]["rawMessageValue"] ?? "")
@@ -243,7 +243,7 @@ export default function TraceTable() {
                             <thead>
                               <tr>
                                 <th
-                                  className="px-4 pb-2"
+                                  className="px-4 pb-2 dark:text-gray-300"
                                   style={{
                                     textAlign: "left",
                                     fontFamily: "Arial, sans-serif",
@@ -252,7 +252,7 @@ export default function TraceTable() {
                                   Signal Name
                                 </th>
                                 <th
-                                  className="px-4 pb-2"
+                                  className="px-4 pb-2 dark:text-gray-300"
                                   style={{
                                     textAlign: "left",
                                     fontFamily: "Arial, sans-serif",
@@ -267,8 +267,8 @@ export default function TraceTable() {
                                 .filter(([key, value], index) => !["__debugData", "rawMessageValue", "msgTimeStamp", "receivedFromChannelName", "msgID"].includes(key))
                                 .map(([key, value], index) => (
                                   <tr key={index}>
-                                    <td className="px-4">{key}</td>
-                                    <td className="px-4">{value.toString()}</td>
+                                    <td className="px-4 dark:text-gray-300">{key}</td>
+                                    <td className="px-4 dark:text-gray-300">{value.toString()}</td>
                                   </tr>
                                 ))}
                             </tbody>
@@ -279,7 +279,7 @@ export default function TraceTable() {
                             <thead>
                               <tr>
                                 <th
-                                  className="px-4 pb-2"
+                                  className="px-4 pb-2 dark:text-gray-300"
                                   style={{
                                     textAlign: "left",
                                     fontFamily: "Arial, sans-serif",
@@ -288,7 +288,7 @@ export default function TraceTable() {
                                   Additonal Info
                                 </th>
                                 <th
-                                  className="px-4 pb-2"
+                                  className="px-4 pb-2 dark:text-gray-300"
                                   style={{
                                     textAlign: "left",
                                     fontFamily: "Arial, sans-serif",
@@ -312,8 +312,8 @@ export default function TraceTable() {
                               {msg[1] && msg[1].__debugData &&
                                 Object.entries(msg[1].__debugData).map(([key, value], index) => (
                                   <tr key={index}>
-                                    <td className="px-4">{key}</td>
-                                    <td className="px-4">{value.toString()}</td>
+                                    <td className="px-4 dark:text-gray-300">{key}</td>
+                                    <td className="px-4 dark:text-gray-300">{value.toString()}</td>
                                   </tr>
                                 ))
                               }

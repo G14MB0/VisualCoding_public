@@ -12,7 +12,7 @@ const titleArray = {
   CURRENT:
     "Insert the propagation value that will be used to calculate the average current in report. This must be also inserted in the CAN channel",
   VOLTAGE:
-    "Insert the propagation value that will be used to calculate the average voltage in report. This can be anything",
+    "This is the name of the global variable containing the voltage measurement from DAIO channel",
   MAX_LOG_SIZE: "Insert the maximum log file size in bytes [b]",
   VOLTAGE_MSG_ID:
     "This will be the message ID that will be used to add the voltage value in the CAN log",

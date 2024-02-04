@@ -2,6 +2,7 @@ import React from 'react'
 import TraceTable from './TraceTable'
 import ConfigurationTableCan from "./ConfigurationTableCan"
 import ConfigurationTableDAIO from "./ConfigurationTableDAIO"
+import ConfigurationCardTasks from './ConfigurationCardTasks'
 
 export default function Trace() {
     return (
@@ -12,6 +13,7 @@ export default function Trace() {
                 </div>
                 <div className="col-span-5">
                     <ConfigurationTableDAIO />
+                    <ConfigurationCardTasks />
                 </div>
             </div>
             <div className='mb-20'>
