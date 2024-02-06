@@ -249,6 +249,7 @@ ipcMain.handle("maximize-app", () => {
 
 function createWindow() {
   const win = new BrowserWindow({
+    title: "ready2flow",
     icon: `${__dirname}public/logo.ico`,
     width: 800,
     height: 600,
@@ -323,7 +324,7 @@ app
             },
           },
         ]);
-        tray.setToolTip("React-electron-Template");
+        tray.setToolTip("Ready2floW");
         tray.setContextMenu(contextMenu);
       }
     }

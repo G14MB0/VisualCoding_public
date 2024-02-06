@@ -1,6 +1,7 @@
 {
   "homepage": ".",
   "name": "ready2flow",
+  "productName": "ready2flow",
   "author": "Gianmaria Castaldini - SD35602 - gianmaria.castaldini@external.stellantis.com",
   "description": "Let the flow be with you!",
   "version": "0.1.0",

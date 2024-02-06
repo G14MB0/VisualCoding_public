@@ -91,19 +91,19 @@ export default function GlobalVar() {
     return (
         <div>
             <form
-                className="min-h-12 m-2 px-4 py-[9px] flex flex-col max-w-[600px] mx-auto rounded-lg shadow bg-white"
+                className="min-h-12 m-2 px-4 py-[9px] flex flex-col max-w-[600px] mx-auto rounded-lg shadow bg-white dark:bg-slate-800"
             >
                 <div className="flex items-center w-full my-2 border-y">
-                    <div className="flex items-center w-full font-helvetica">Name</div>
-                    <div className="flex items-center w-full font-helvetica">Value</div>
-                    <div className="flex items-center w-[80px] font-helvetica ">Delete</div>
+                    <div className="flex items-center w-full font-helvetica dark:text-white">Name</div>
+                    <div className="flex items-center w-full font-helvetica dark:text-white">Value</div>
+                    <div className="flex items-center w-[80px] font-helvetica dark:text-white">Delete</div>
                 </div>
                 {Object.entries(globalVars).map(([key, value]) => (
-                    <div className="flex items-center w-full  my-2 bg-gray-50" key={key}>
-                        <div className="flex items-center w-full font-helvetica">{key}</div>
-                        <div className="flex items-center w-full font-helvetica">{value}</div>
+                    <div className="flex items-center w-full  my-2 bg-gray-50 dark:text-white dark:bg-slate-800" key={key}>
+                        <div className="flex items-center w-full font-helvetica dark:text-white">{key}</div>
+                        <div className="flex items-center w-full font-helvetica dark:text-white">{value}</div>
                         <div className='px-3 cursor-pointer' onClick={(e) => handleDeleteVariable(e, key)}>
-                            <DeleteRounded className='text-gray-700' />
+                            <DeleteRounded className='text-gray-700 dark:text-gray-300' />
                         </div>
                     </div>
                 ))}
@@ -113,7 +113,7 @@ export default function GlobalVar() {
                 <div
                     className="flex items-center w-full py-4"
                 >
-                    <div className="flex items-center w-full font-mono">New Global Variable</div>
+                    <div className="flex items-center w-full font-mono dark:text-white">New Global Variable</div>
                     <input
                         required
                         value={newGv}
@@ -123,7 +123,7 @@ export default function GlobalVar() {
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-6"
                     />
                     <div className='px-3 cursor-pointer' onClick={handleAddVariable}>
-                        <AddRounded className='text-gray-700' />
+                        <AddRounded className='text-gray-700 dark:text-gray-300' />
                     </div>
                 </div>
 

@@ -6,7 +6,7 @@ import 'reactflow/dist/style.css';
 import SideBar from './SideBar';
 import fetchApi from '../../utils/request/requests';
 import { AppContext } from '../../provider/appProvider';
-import { PlayArrowRounded, RefreshRounded, SaveSharp, StopRounded, UploadFile } from '@mui/icons-material';
+import { CloseRounded, PlayArrowRounded, RefreshRounded, SaveSharp, StopRounded, UploadFile } from '@mui/icons-material';
 import { closeWs, openWs, startAllLog, startCanLog, stopAllLog } from './utils';
 import { getNodeTypes, getAdditionalData } from './nodeDefinition';
 import SimpleFloatingEdge from './customNodes/SimpleFloatingEdge';
@@ -17,11 +17,20 @@ import ButtonMain from '../UI/buttons/ButtonMain';
 // Create an instance of ELK
 const elk = new ELK();
 const elkOptions = {
-    'elk.algorithm': 'layered',
-    'elk.layered.spacing.nodeNodeBetweenLayers': '250',
-    'elk.spacing.nodeNode': '280',
-    'elk.direction': 'RIGHT'
+    'elk.algorithm': 'mrtree',
+    'elk.direction': 'RIGHT',
+    'elk.spacing.nodeNode': 50,
+    'elk.layered.spacing.nodeNodeBetweenLayers': 50,
+    'elk.edgeRouting': 'ORTHOGONAL',
+    'elk.nodeLabels.placement': 'INSIDE V_TOP H_TOP',
+    'elk.aspectRatio': 1.5 // Optional, only if you want to constrain the aspect ratio
 };
+// const elkOptions = {
+//     'elk.algorithm': 'mrtree',
+//     'elk.layered.spacing.nodeNodeBetweenLayers': '250',
+//     'elk.spacing.nodeNode': '60',
+//     'elk.direction': 'RIGHT'.
+// };
 
 const getLayoutedElements = (nodes, edges, options = {}) => {
     const isHorizontal = true
@@ -36,8 +45,8 @@ const getLayoutedElements = (nodes, edges, options = {}) => {
             sourcePosition: isHorizontal ? 'right' : 'bottom',
 
             // Hardcode a width and height for elk to use when layouting.
-            width: 250,
-            height: 150,
+            width: 350,
+            height: 120,
         })),
         edges: edges,
     };
@@ -449,7 +458,7 @@ export default function FlowPage() {
                                 setIsRunning(true)
                             }}>
                             {!isRunning ?
-                                <PlayArrowRounded className='text-green-900' />
+                                <PlayArrowRounded className='text-green-500' />
                                 :
                                 <RefreshRounded className='text-gray-700 animate-spin1' />
                             }
@@ -457,10 +466,19 @@ export default function FlowPage() {
                         :
                         <button className=''
                             onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); stopAllLog(localServerUrl, localServerPort); closeWs(globalWs, setGlobalWs);; setIsRunning(false) }}>
-                            <StopRounded className='text-red-900 animate-pulse3' />
+                            <StopRounded className='text-red-700 animate-pulse3' />
                         </button>
                     }
                 </div>
+                <div className='w-12'>{ }</div>
+
+                {fileUsed !== "" &&
+                    <div className='flex items-center'>
+                        <div className="font-mono dark:text-white">{fileUsed?.split(/[/\\]/).pop()}</div>
+                        <div className='ml-2 text-red-700 dark:text-red-300 cursor-pointer flex items-center' onClick={() => { setFileUsed("") }}>
+                            <CloseRounded fontSize='small' />
+                        </div>
+                    </div>}
                 <div className='w-12'>{ }</div>
 
                 <div>

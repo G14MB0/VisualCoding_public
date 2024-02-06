@@ -51,7 +51,7 @@ export default () => {
 
 
     return (
-        <aside className='dark:bg-slate-900 shadow-customwhite z-10'>
+        <aside className='dark:bg-slate-900 shadow-customwhite z-10 scolatela overflow-y-scroll'>
             <div className="w-full px-2 py-1 font-semibold dark:text-white">Default Nodes</div>
             <div className='flex flex-wrap'>
                 {Object.entries(availableNode).filter(([, value]) => value.category === "default").map(([element, value], key) => (
@@ -95,10 +95,11 @@ export default () => {
                 ))}
 
             </div>
+            <div className='h-10'></div>
             {/* <div className='h-full'></div> */}
-            <div className='h-10 py-2 flex items-center absolute bottom-0 '>
+            <div className='h-10 py-2 flex items-center absolute bottom-0 w-[225px] rounded-3xl bg-white/50 px-2 mb-1 shadow-custom2 dark:shadow-custom2white dark:bg-slate-700/50 backdrop-blur-sm backdrop-brightness-70'>
                 <div onClick={handleOpenGlobalVar}>
-                    <PublicRounded className='text-blue-900 cursor-pointer' />
+                    <PublicRounded className='text-gray-900 dark:text-gray-300 cursor-pointer' />
                 </div>
             </div>
             {/* <div className="dndnode input" onDragStart={(event) => onDragStart(event, 'input')} draggable>

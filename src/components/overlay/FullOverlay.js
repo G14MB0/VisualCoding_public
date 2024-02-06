@@ -38,7 +38,7 @@ export default function FullOverlay({ Component, ...props }) {
                 >
                   <span className="sr-only">Close</span>
                   <Close
-                    className="h-4 w-4  z-[999999999]  bg-gray-100 opacity-50 text-gray-900"
+                    className="h-4 w-4  z-[999999999] rounded-full opacity-80 text-gray-900 dark:text-gray-50 "
                     aria-hidden="true"
                   />
                 </button>
