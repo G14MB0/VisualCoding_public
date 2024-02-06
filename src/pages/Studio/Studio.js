@@ -18,7 +18,7 @@ export default function Studio() {
         <div className={"main"}>
             {/* <LogInOverlay /> */}
             {/* <SignUpOverlay /> */}
-            <div className="w-full h-[calc(100vh-38px)]">
+            <div className="w-full h-[calc(100vh-38px)] aspect-[7/4]">
                 <FlowPage />
             </div>
 

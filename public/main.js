@@ -309,11 +309,11 @@ app
       // Ensure only one tray instance is created
       if (!tray) { // Check if tray doesn't already exist
         tray = new Tray(`${__dirname}\\tray.png`);
+        const mainWindow = BrowserWindow.getFocusedWindow();
         const contextMenu = Menu.buildFromTemplate([
           {
             label: "Open",
             click: () => {
-              const mainWindow = BrowserWindow.getFocusedWindow();
               mainWindow.show();
             },
           },

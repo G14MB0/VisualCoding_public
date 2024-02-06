@@ -1,12 +1,12 @@
 import React, { createContext, useEffect, useState } from "react";
 import Home from "../pages/home/Home";
+import Studio from "../pages/Studio/Studio";
+import Setting from "../pages/setting/Setting";
 import Header from "../components/Header";
 
 import FullOverlay from "../components/overlay/FullOverlay";
 import { ReactFlowProvider, useEdgesState, useNodesState } from "reactflow";
-import Trace from "../pages/Trace/Trace";
-import Studio from "../pages/Studio/Studio";
-import Setting from "../pages/setting/Setting";
+
 
 export const AppContext = createContext();
 
@@ -43,32 +43,29 @@ export default function AppProvider() {
   const [save, setSave] = useState(false)
   const [fileUsed, setFileUsed] = useState("")
 
+  // Global Debug mode State
   const [isDebug, setIsDebug] = useState(false)
-  const [isRunning, setIsRunning] = useState(false);
-  const [isLogging, setIsLogging] = useState(false);
-  const [isDaioLogging, setIsDaioLogging] = useState(false);
 
+  // Global Running state
+  const [isRunning, setIsRunning] = useState(false);
+
+  // Global state for nodes and edges used in reactFlow
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   // History state to keep track of past node and edge states
   const [history, setHistory] = useState({ nodes: [], edges: [], currentIndex: -1 });
 
+  // used to mantain a ws in a state globally
   const [globalWs, setGlobalWs] = useState(null);
   const [activeNode, setActiveNode] = useState({});
 
 
   const [isDark, setIsDark] = useState({});
 
-  useEffect(() => {
-    console.log(isLogging, isDaioLogging)
-
-  }, [isLogging, isDaioLogging])
-
 
   //sono tutte le mie 'pagine'
   const cmpByState = {
     Home: <Home />,
-    Trace: <Trace />,
     Studio: <Studio />,
     Settings: <Setting />
   };
@@ -110,8 +107,6 @@ export default function AppProvider() {
             globalWs, setGlobalWs,
             activeNode, setActiveNode,
             isDark, setIsDark,
-            isLogging, setIsLogging,
-            isDaioLogging, setIsDaioLogging
           }}
         >
           <Header />
