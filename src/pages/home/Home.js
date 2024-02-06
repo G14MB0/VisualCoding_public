@@ -2,7 +2,7 @@
 import "./index.css";
 // const { ipcRenderer } = window.require("electron");
 const uniqueKey = Date.now();
-const iframeSrc = `https://my.spline.design/interactivesparkletterwithparticleeffectcopy-371a9aa1dd45ba33b88383284d7a637c/?key=${uniqueKey}`;
+const iframeSrc = `https://my.spline.design/interactivesparkletterwithparticleeffectcopycopy-8783de6d9ea58904d105bd9f6a46e0aa/?key=${uniqueKey}`;
 
 export default function Home() {
   // const { serverUrl, token } = useContext(AppContext);
