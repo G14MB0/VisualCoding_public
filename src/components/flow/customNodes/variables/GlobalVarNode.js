@@ -11,7 +11,7 @@ import { PublicRounded } from '@mui/icons-material';
 const keyPlaceholder = '${key}';
 
 const initialPythonCode = `async def FunctionGlobalVar(data):
-    if data:
+    if data != None:
         gv.globalVarDict["${keyPlaceholder}"] = data
         await gv.putGlobalValue({"${keyPlaceholder}": data})
         return data
@@ -50,7 +50,7 @@ export default memo(({ data, isConnectable, updateNodeData }) => {
     return (
 
 
-        <div className='nodeFree h-24 w-28 drag_Handle flex flex-col justify-around items-center' >
+        <div className='nodeFree h-24 min-w-28 drag_Handle flex flex-col justify-around items-center' >
             <Handle
                 type="target"
                 position={Position.Left}

@@ -7,6 +7,9 @@ body {
     overflow-y: hidden;
 }
 
+.spline-watermark {
+    opacity: 0;
+}
 
 .nodeBase {
     @apply border border-[#333] p-4 min-h-12 rounded-lg cursor-grab

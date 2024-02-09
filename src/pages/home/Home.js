@@ -18,8 +18,8 @@ export default function Home() {
 
   return (
     <div className={"main dark:bg-slate-950"}>
-      <div className="h-[105vh] dark:bg-slate-950">
-        <iframe src={iframeSrc} frameborder='0' width='100%' height='100%'></iframe>
+      <div className="h-[105vh]  dark:bg-slate-950">
+        <iframe className="scale-20" src={iframeSrc} frameborder='0' width='100%' height='100%'></iframe>
       </div>
     </div>
   );
