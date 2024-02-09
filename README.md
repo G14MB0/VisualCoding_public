@@ -1,4 +1,4 @@
-# Visual Coding Software Name
+# Visual Coding Software
 ### *** THIS IS ONLY THE GUI ***
 In this repository you'll find the graphical interface for a fully functional visual coding software build with React and Electorn (this repo) and Python (the backend repo, look below for the link).
 
