@@ -4,7 +4,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Dialog } from "@headlessui/react";
 import { Switch } from "@mui/material";
 import fetchApi from "../utils/request/requests";
-import { closeWs, openWs, startAllLog, startCanLog, stopAllLog } from "./flow/utils";
+import { closeWs, openWs } from "./flow/utils";
 import { PlayArrowRounded, RefreshRounded, StopRounded } from "@mui/icons-material";
 import Switcher from "./UI/Switcher";
 
@@ -15,7 +15,7 @@ const navigation_array = [
 ];
 
 export default function Header() {
-  const { setOpenLogin, setOpenSignUp, setAppState, isLogged, setIsLogged, setIsDebug, appState, isRunning, localServerPort, localServerUrl, setActiveNode, setIsRunning, setGlobalWs, globalWs, isLogging, isDaioLogging } =
+  const { setOpenLogin, setOpenSignUp, setAppState, isLogged, setIsLogged, setIsDebug, appState, isRunning, localServerPort, localServerUrl, setActiveNode, setIsRunning, setGlobalWs, globalWs } =
     useContext(AppContext);
   const [navigation, setNavigation] = useState(navigation_array);
 
@@ -68,14 +68,7 @@ export default function Header() {
             <button className=''
               onClick={() => {
                 fetchApi("GET", localServerUrl, localServerPort, "nodes/run");
-                if (isLogging) {
-                  if (isDaioLogging) {
-                    startAllLog(localServerUrl, localServerPort);
-                  } else {
-                    startCanLog(localServerUrl, localServerPort);
-                  }
-                }
-                openWs(localServerUrl, localServerPort, setGlobalWs, setActiveNode, setIsRunning);
+                                openWs(localServerUrl, localServerPort, setGlobalWs, setActiveNode, setIsRunning);
                 setIsRunning(true)
               }}>
               {!isRunning ?
@@ -86,7 +79,7 @@ export default function Header() {
             </button>
             :
             <button className=''
-              onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); stopAllLog(localServerUrl, localServerPort); closeWs(globalWs, setGlobalWs);; setIsRunning(false) }}>
+              onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); closeWs(globalWs, setGlobalWs);; setIsRunning(false) }}>
               <StopRounded className='text-red-700 animate-pulse' fontSize="large" />
             </button>
           }

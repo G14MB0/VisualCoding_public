@@ -7,19 +7,7 @@ import ButtonSecondary from "../../components/UI/buttons/ButtonSecondary";
 import { FolderCopyOutlined, ListAlt, Settings } from "@mui/icons-material";
 
 const titleArray = {
-  EMAIL: "Insert all the email separated by a comma (,)",
-  CHART_SAMPLE_UPDATE: "Value in seconds [s]",
-  CURRENT:
-    "Insert the propagation value that will be used to calculate the average current in report. This must be also inserted in the CAN channel",
-  VOLTAGE:
-    "This is the name of the global variable containing the voltage measurement from DAIO channel",
-  MAX_LOG_SIZE: "Insert the maximum log file size in bytes [b]",
-  VOLTAGE_MSG_ID:
-    "This will be the message ID that will be used to add the voltage value in the CAN log",
-  EMAIL_OBJECT:
-    "the email object. Available variables: \n{info} \n {currentName} \n {voltageName} \n\n standard Python3 package modules available.",
-  EMAIL_TEMPLATE:
-    "Path of the email template. See docs to know how to edit or create a new template",
+  EXAMPLE: "example"
 };
 
 export default function Setting() {

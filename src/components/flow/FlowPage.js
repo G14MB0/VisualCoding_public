@@ -7,7 +7,7 @@ import SideBar from './SideBar';
 import fetchApi from '../../utils/request/requests';
 import { AppContext } from '../../provider/appProvider';
 import { CloseRounded, PlayArrowRounded, RefreshRounded, SaveSharp, StopRounded, UploadFile } from '@mui/icons-material';
-import { closeWs, openWs, startAllLog, startCanLog, stopAllLog } from './utils';
+import { closeWs, openWs } from './utils';
 import { getNodeTypes, getAdditionalData } from './nodeDefinition';
 import SimpleFloatingEdge from './customNodes/SimpleFloatingEdge';
 import ELK from 'elkjs/lib/elk.bundled';
@@ -89,7 +89,7 @@ const getId = () => `node_${++id}`;
 export default function FlowPage() {
     const { localServerUrl, localServerPort, save, setSave, fileUsed, setFileUsed, reload, setReload, setIsRunning, isRunning, nodes, setNodes, onNodesChange,
         edges, setEdges, onEdgesChange, isDark,
-        history, setHistory, globalWs, setGlobalWs, activeNode, setActiveNode, isLogging, isDaioLogging } =
+        history, setHistory, globalWs, setGlobalWs, activeNode, setActiveNode } =
         useContext(AppContext);
 
 
@@ -447,13 +447,7 @@ export default function FlowPage() {
                         <button className=''
                             onClick={() => {
                                 fetchApi("GET", localServerUrl, localServerPort, "nodes/run");
-                                if (isLogging) {
-                                    if (isDaioLogging) {
-                                        startAllLog(localServerUrl, localServerPort);
-                                    } else {
-                                        startCanLog(localServerUrl, localServerPort);
-                                    }
-                                }
+                                
                                 openWs(localServerUrl, localServerPort, setGlobalWs, setActiveNode, setIsRunning);
                                 setIsRunning(true)
                             }}>
@@ -465,7 +459,7 @@ export default function FlowPage() {
                         </button>
                         :
                         <button className=''
-                            onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); stopAllLog(localServerUrl, localServerPort); closeWs(globalWs, setGlobalWs);; setIsRunning(false) }}>
+                            onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/stop"); closeWs(globalWs, setGlobalWs);; setIsRunning(false) }}>
                             <StopRounded className='text-red-700 animate-pulse3' />
                         </button>
                     }
@@ -485,7 +479,10 @@ export default function FlowPage() {
                     <button className='ml-1'
                         onClick={() => { fetchApi("POST", localServerUrl, localServerPort, "nodes/save", { filePath: fileUsed }).then((response) => { setSave(!save); setFileUsed(response.filePath); setReload(!reload) }) }}><SaveSharp className='text-gray-700 dark:text-gray-300' fontSize='small' /></button>
                     <button className='ml-1'
-                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/load").then((response) => { setFileUsed(response.filePath); setNodes([]); setEdges([]); setReload(!reload) }) }}><UploadFile className='text-gray-700 dark:text-gray-300' fontSize='small' /></button>
+                        onClick={() => { fetchApi("GET", localServerUrl, localServerPort, "nodes/load").then((response) => { response.filePath ? setFileUsed(response.filePath) : setFileUsed(""); setNodes([]); setEdges([]); setReload(!reload) }) }}><UploadFile className='text-gray-700 dark:text-gray-300' fontSize='small' />
+
+                    </button>
+
 
                 </div>
             </div>

@@ -7,7 +7,7 @@ const kill = require("tree-kill");
 const { autoUpdater } = require("electron-updater");
 const bonjour = require("bonjour")();
 
-const BACKEND_PATH = "server\\R2F_0_1_0\\R2F_0_1_0.exe"; //the relative path from root folder of backend executable (if executable)
+const BACKEND_PATH = ".\\server\\VisualCoding_Backend_Public\\VisualCoding_Backend_Public.exe"; //the relative path from root folder of backend executable (if executable)
 const CLOSE_ALL_TIMEOUT = 3000; // how many ms to wait until close the fronend if backend can't be closed.
 const checkForUpdatesInterval = 5 * 60 * 1000; // Check every 5 min. If set to 0, it runs only at startup
 const serverPort = 12346; // make sure is the same as in the "start" react snippet in package.json
@@ -159,6 +159,7 @@ ipcMain.handle("hide-app", async (event) => {
   }
 });
 
+
 const handleQuitApp = async () => {
   const choice = 0; // Just an example, you might want this to be an argument.
 
@@ -229,6 +230,10 @@ const handleQuitApp = async () => {
   }
 };
 
+ipcMain.handle("close-app", async (event) => {
+  handleQuitApp()
+});
+
 ipcMain.handle("minimize-app", () => {
   const mainWindow = BrowserWindow.getFocusedWindow();
   if (mainWindow) {
@@ -260,7 +265,7 @@ function createWindow() {
       enableRemoteModule: true,
       nodeIntegration: true,
       contextIsolation: false,
-      devTools: true,
+      devTools: false,
       preload: path.join(__dirname, "../preload.js"),
     },
   });
@@ -282,20 +287,20 @@ app.on("ready", createWindow);
 app.on("ready", setupAutoUpdater);
 
 
-// // Disable reload b ctrl+r
-// app.on('browser-window-focus', function () {
-//   globalShortcut.register("CommandOrControl+R", () => {
-//     console.log("CommandOrControl+R is pressed: Shortcut Disabled");
-//   });
-//   globalShortcut.register("F5", () => {
-//     console.log("F5 is pressed: Shortcut Disabled");
-//   });
-// });
+// Disable reload b ctrl+r
+app.on('browser-window-focus', function () {
+  globalShortcut.register("CommandOrControl+R", () => {
+    console.log("CommandOrControl+R is pressed: Shortcut Disabled");
+  });
+  globalShortcut.register("F5", () => {
+    console.log("F5 is pressed: Shortcut Disabled");
+  });
+});
 
-// app.on('browser-window-blur', function () {
-//   globalShortcut.unregister('CommandOrControl+R');
-//   globalShortcut.unregister('F5');
-// });
+app.on('browser-window-blur', function () {
+  globalShortcut.unregister('CommandOrControl+R');
+  globalShortcut.unregister('F5');
+});
 
 app
   .whenReady()
@@ -304,29 +309,29 @@ app
       runExeFile();
 
       console.log("START UPDATE FETCH");
-      autoUpdater.checkForUpdatesAndNotify();
+      // autoUpdater.checkForUpdatesAndNotify();
 
       // Ensure only one tray instance is created
-      if (!tray) { // Check if tray doesn't already exist
-        tray = new Tray(`${__dirname}\\tray.png`);
-        const mainWindow = BrowserWindow.getFocusedWindow();
-        const contextMenu = Menu.buildFromTemplate([
-          {
-            label: "Open",
-            click: () => {
-              mainWindow.show();
-            },
-          },
-          {
-            label: "Quit",
-            click: () => {
-              handleQuitApp();
-            },
-          },
-        ]);
-        tray.setToolTip("Ready2floW");
-        tray.setContextMenu(contextMenu);
-      }
+      // if (!tray) { // Check if tray doesn't already exist
+      //   tray = new Tray(`${__dirname}\\tray.png`);
+      //   const mainWindow = BrowserWindow.getFocusedWindow();
+      //   const contextMenu = Menu.buildFromTemplate([
+      //     {
+      //       label: "Open",
+      //       click: () => {
+      //         mainWindow.show();
+      //       },
+      //     },
+      //     {
+      //       label: "Quit",
+      //       click: () => {
+      //         handleQuitApp();
+      //       },
+      //     },
+      //   ]);
+      //   tray.setToolTip("Ready2floW");
+      //   tray.setContextMenu(contextMenu);
+      // }
     }
     _avoidOverStarting = 1
 
